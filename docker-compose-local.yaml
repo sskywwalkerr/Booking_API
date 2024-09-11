@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: "db"
+    image: postgres:12.0-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - custom
+networks:
+  custom:
+    driver: bridge
+
