@@ -1,9 +1,11 @@
+
 from fastapi import FastAPI
 import uvicorn
 from fastapi.routing import APIRouter
 from sqlalchemy import Column, Boolean, String
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 import settings
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -23,9 +25,9 @@ from pydantic import validator
 engine = create_async_engine(settings.REAL_DATABASE_URL, future=True, echo=True)
 
 # create session for the interaction with database
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-#async_session = sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
-
+async_session = sessionmaker(engine, expire_on_commit=False, class_= AsyncSession)
+# async_session = sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
+# engine = create_engine('postgresql+asyncpg://postgres:postgres@0.0.0:5432/postgres', client_encoding='utf8')
 ##############################
 # BLOCK  WITH DATABASE  MODELS#
 ##############################
@@ -45,9 +47,8 @@ class User(Base):
 
 
 
-###################################################
-#BLOCK FOR INTERACTION WITH DB IN BUSINESS CONTEXT#
-###################################################
+# BLOCK FOR INTERACTION WITH DB IN BUSINESS CONTEXT
+
 
 class UserDAL:
     def __init__(self, db_session: AsyncSession):
@@ -76,11 +77,11 @@ LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\-]+$")
 class TunedModel(BaseModel):
     class Config:
         """obj to json"""
-        from_attributes = True
+        orm_mode = True
         #arbitrary_types_allowed = True
 
 class  ShowUser(TunedModel):
-    user_id = uuid.UUID
+    user_id: uuid.UUID
     name: str
     surname: str
     email: EmailStr
