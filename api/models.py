@@ -4,16 +4,15 @@ import uuid
 from fastapi import HTTPException
 from pydantic import BaseModel, EmailStr, validator
 
-
-
-
 LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\-]+$")
+
 
 class TunedModel(BaseModel):
     class Config:
         """obj to json"""
         orm_mode = True
-        #arbitrary_types_allowed = True
+        # arbitrary_types_allowed = True
+
 
 class ShowUser(TunedModel):
     user_id: uuid.UUID
@@ -21,6 +20,7 @@ class ShowUser(TunedModel):
     surname: str
     email: EmailStr
     is_active: bool
+
 
 class UserCreate(BaseModel):
     name: str
