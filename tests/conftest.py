@@ -9,6 +9,7 @@ import os
 import asyncio
 from db.session import get_db
 import asyncpg
+from sqlalchemy import text
 
 test_engine = create_async_engine(settings.TEST_DATABASE_URL, future=True, echo=True)
 
@@ -45,7 +46,7 @@ async def clean_tables(async_session_test):
     async with async_session_test() as session:
         async with session.begin():
             for table_for_cleaning in CLEAN_TABLES:
-                await session.execute(f"""TRUNCATE TABLE {table_for_cleaning};""")
+                await session.execute(text(f"""TRUNCATE TABLE {table_for_cleaning};"""))
 
 
 @pytest.fixture(scope="function")
@@ -74,4 +75,4 @@ async def get_user_from_database(asyncpg_pool):
         async with asyncpg_pool.acquire() as connection:
             return await connection.fetch("""SELECT * FROM users WHERE user_id = $1;""", user_id)
 
-    return get_user_from_database_by_uuid()
+    return get_user_from_database_by_uuid
