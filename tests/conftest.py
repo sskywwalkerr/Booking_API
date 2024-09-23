@@ -10,9 +10,14 @@ import asyncio
 from db.session import get_db
 import asyncpg
 from sqlalchemy import text
+import sys
 
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+# create async engine for interaction with database
 test_engine = create_async_engine(settings.TEST_DATABASE_URL, future=True, echo=True)
 
+# create session for the interaction with database
 test_async_session = sessionmaker(test_engine, expire_on_commit=False, class_=AsyncSession)
 
 CLEAN_TABLES = [
@@ -31,7 +36,7 @@ def event_loop():
 async def run_migrations():
     os.system("alembic init migrations")
     os.system('alembic revision --autogenerate -m "test running migrations"')
-    os.system("alembic upgrade head")
+    os.system("alembic upgrade heads")
 
 
 @pytest.fixture(scope="session")
@@ -43,19 +48,25 @@ async def async_session_test():
 
 @pytest.fixture(scope="function", autouse=True)
 async def clean_tables(async_session_test):
+    """Clean data in all tables before running test function"""
     async with async_session_test() as session:
         async with session.begin():
             for table_for_cleaning in CLEAN_TABLES:
                 await session.execute(text(f"""TRUNCATE TABLE {table_for_cleaning};"""))
 
 
+async def _get_test_db():
+    try:
+        yield test_async_session()
+    finally:
+        pass
+
 @pytest.fixture(scope="function")
 async def client() -> Generator[TestClient, Any, None]:
-    async def _get_test_db():
-        try:
-            yield test_async_session()
-        finally:
-            pass
+    """
+    Create a new FastAPI TestClient that uses the `db_session` fixture to override
+    the `get_db` dependency that is injected into routes.
+    """
 
     app.dependency_overrides[get_db] = _get_test_db
     with TestClient(app) as client:
@@ -71,6 +82,7 @@ async def asyncpg_pool():
 
 @pytest.fixture
 async def get_user_from_database(asyncpg_pool):
+
     async def get_user_from_database_by_uuid(user_id: str):
         async with asyncpg_pool.acquire() as connection:
             return await connection.fetch("""SELECT * FROM users WHERE user_id = $1;""", user_id)
