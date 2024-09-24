@@ -12,6 +12,7 @@ import asyncpg
 from sqlalchemy import text
 import sys
 
+
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 # create async engine for interaction with database
@@ -35,7 +36,7 @@ def event_loop():
 @pytest.fixture(scope="session", autouse=True)
 async def run_migrations():
     os.system("alembic init migrations")
-    os.system('alembic revision --autogenerate -m "test running migrations"')
+    os.system('alembic revision --autogenerate -m "test"')
     os.system("alembic upgrade heads")
 
 
@@ -52,9 +53,8 @@ async def clean_tables(async_session_test):
     async with async_session_test() as session:
         async with session.begin():
             for table_for_cleaning in CLEAN_TABLES:
-                await session.execute(text(f"""TRUNCATE TABLE {table_for_cleaning};"""))
-
-
+                await session.execute(f"""TRUNCATE TABLE {table_for_cleaning};""")
+#await session.execute(text(f'TRUNCATE TABLE {table_for_cleaning};'))
 async def _get_test_db():
     try:
         yield test_async_session()
@@ -68,9 +68,12 @@ async def client() -> Generator[TestClient, Any, None]:
     the `get_db` dependency that is injected into routes.
     """
 
+
     app.dependency_overrides[get_db] = _get_test_db
     with TestClient(app) as client:
         yield client
+
+
 
 
 @pytest.fixture(scope="session")
@@ -78,6 +81,7 @@ async def asyncpg_pool():
     pool = await asyncpg.create_pool("".join(settings.TEST_DATABASE_URL.split("+asyncpg")))
     yield pool
     pool.close()
+
 
 
 @pytest.fixture
@@ -88,3 +92,10 @@ async def get_user_from_database(asyncpg_pool):
             return await connection.fetch("""SELECT * FROM users WHERE user_id = $1;""", user_id)
 
     return get_user_from_database_by_uuid
+
+@pytest.fixture
+async def create_user_in_database(user_id:str, name: str, surname: str, email: str, is_active: bool):
+    async with asyncpg_pool.acquire() as connection:
+        return await connection.execute("""INSERT INTO users ($1, $2, $3, $4, $5)""",
+                                        user_id, name, surname, email, is_active)
+    return create_user_in_database
