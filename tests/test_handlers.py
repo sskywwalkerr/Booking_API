@@ -5,9 +5,9 @@ import pytest
 
 async def test_create_user(client, get_user_from_database):
     user_data = {
-      "name": "Nikolai",
-      "surname": "Sviridov",
-      "email": "lol@kek.com"
+      "name": "Ivani",
+      "surname": "Ivanovi",
+      "email": "Ivani@mail.ru"
     }
     resp = client.post("/user/", data=json.dumps(user_data))
     data_from_resp = resp.json()
@@ -28,9 +28,9 @@ async def test_create_user(client, get_user_from_database):
 async def test_delete_user(client, create_user_in_database, get_user_from_database):
     user_data = {
       "user_id": uuid4(),
-      "name": "Nikolai",
-      "surname": "Sviridov",
-      "email": "lol@kek.com",
+      "name": "Ivan",
+      "surname": "Ivanov",
+      "email": "Ivan@mail.ru",
       "is_active": True
     }
     await create_user_in_database(**user_data)
@@ -49,9 +49,9 @@ async def test_delete_user(client, create_user_in_database, get_user_from_databa
 async def test_get_user(client, create_user_in_database, get_user_from_database):
     user_data = {
       "user_id": uuid4(),
-      "name": "Nikolai",
-      "surname": "Sviridov",
-      "email": "lol@kek.com",
+      "name": "Ivan",
+      "surname": "Ivanov",
+      "email": "Ivan@mail.ru",
       "is_active": True
     }
     await create_user_in_database(**user_data)
@@ -68,15 +68,15 @@ async def test_get_user(client, create_user_in_database, get_user_from_database)
 async def test_update_user(client, create_user_in_database, get_user_from_database):
     user_data = {
       "user_id": uuid4(),
-      "name": "Nikolai",
-      "surname": "Sviridov",
-      "email": "lol@kek.com",
+      "name": "Ivan",
+      "surname": "Ivanov",
+      "email": "Ivan@mail.ru",
       "is_active": True
     }
     user_data_updated = {
       "name": "Ivan",
       "surname": "Ivanov",
-      "email": "cheburek@kek.com",
+      "email": "Ivan123@mail.ru",
     }
     await create_user_in_database(**user_data)
     resp = client.patch(f"/user/?user_id={user_data['user_id']}", data=json.dumps(user_data_updated))
@@ -140,9 +140,9 @@ async def test_update_user_validation_error(client, create_user_in_database, get
                                             expected_status_code, expected_detail):
     user_data = {
         "user_id": uuid4(),
-        "name": "Nikolai",
-        "surname": "Sviridov",
-        "email": "lol@kek.com",
+        "name": "Ivan",
+        "surname": "Ivanov",
+        "email": "Ivan@mail.ru",
         "is_active": True
     }
     await create_user_in_database(**user_data)
