@@ -19,3 +19,4 @@ class User(Base):
     surname = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     is_active = Column(Boolean(), default=True)
+    hashed_password = Column(String, nullable=False)

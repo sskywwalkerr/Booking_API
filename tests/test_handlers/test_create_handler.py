@@ -22,6 +22,7 @@ async def test_create_user(client, get_user_from_database):
     assert str(user_from_db["user_id"]) == data_from_resp["user_id"]
 
 
+
 async def test_create_user_duplicate_email_error(client, get_user_from_database):
     user_data = {"name": "Nikolai", "surname": "Sviridov", "email": "lol@kek.com"}
     user_data_same = {"name": "Petr", "surname": "Petrov", "email": "lol@kek.com"}
@@ -71,6 +72,7 @@ async def test_create_user_duplicate_email_error(client, get_user_from_database)
                         "msg": "field required",
                         "type": "value_error.missing",
                     },
+
                 ]
             },
         ),
