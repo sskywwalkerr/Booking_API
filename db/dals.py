@@ -1,6 +1,6 @@
 from typing import Union
 from uuid import UUID
-
+from enum import Enum
 from sqlalchemy import update, and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,12 @@ from db.models import User
 # BLOCK FOR INTERACTION WITH DATABASE IN BUSINESS CONTEXT #
 ###########################################################
 
+class PortalRole(str, Enum):
+    ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
+    ROLE_PORTAL_ADMIN = "ROLE_PORTAL_ADMIN"
+    ROLE_PORTAL_SUPERADMIN = "ROLE_PORTAL_SUPERADMIN"
+
+
 
 class UserDAL:
     """Data Access Layer for operating user info"""
@@ -17,13 +23,14 @@ class UserDAL:
         self.db_session = db_session
 
     async def create_user(
-        self, name: str, surname: str, email: str, hashed_password: str
+        self, name: str, surname: str, email: str, hashed_password: str, roles: list[PortalRole]
     ) -> User:
         new_user = User(
             name=name,
             surname=surname,
             email=email,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
+            roles=roles,
         )
         self.db_session.add(new_user)
         await self.db_session.flush()
