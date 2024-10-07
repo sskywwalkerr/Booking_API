@@ -104,3 +104,42 @@ async def update_user_by_id(
         logger.error(err)
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
     return UpdatedUserResponse(updated_user_id=updated_user_id)
+
+@user_router.patch("/admin_privilege", response_model=UpdatedUserResponse)
+async def grant_admin_privilege(
+        user_id: UUID,
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user_from_token),
+):
+    if not current_user.is_superadmin:
+        raise HTTPException(status_code=403, detail="Forbidden.")
+    if current_user.user_id == user_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot manage privileges of itself."
+        )
+    user_for_promotion = await _get_user_by_id(user_id, db)
+    if user_for_promotion.is_admin or user_for_promotion.is_superadmin:
+        raise HTTPException(
+            status_code=409,
+            detail=f"User with id {user_id} already promoted to admin / superadmin. ",
+        )
+    if user_for_promotion is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"User with id {user_id} not found."
+        )
+    updated_user_params = {
+        "roles": {*user_for_promotion.enrich_admin_roles_by_admin_role()}
+    }
+    try:
+        updated_user_id = await _update_user(
+            updated_user_params=updated_user_params, session=db, user_id=user_id
+        )
+    except IntegrityError as err:
+        logger.error(err)
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database error: {err}"
+        )
+    return UpdatedUserResponse(updated_user_id=updated_user_id)
