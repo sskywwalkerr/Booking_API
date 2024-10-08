@@ -42,3 +42,9 @@ class User(Base):
     def add_superadmin_privileges_to_model(self):
         if self.is_admin:
             return [role for role in self.roles if role != PortalRole.ROLE_PORTAL_ADMIN]
+
+    def remove_admin_privileges_from_model(self):
+        if self.is_admin:
+            return [role for role in self.roles if role != PortalRole.ROLE_PORTAL_ADMIN]
+
+
