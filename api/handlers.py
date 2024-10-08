@@ -170,5 +170,3 @@ async def revoke_admin_privilege(
             *user_for_revoke_admin_privileges.remote_admin_privileges_from_model()
         }
     }
-    try:
-        updated_user_id
