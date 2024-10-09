@@ -1,5 +1,6 @@
 import asyncio
 import os
+import sys
 from datetime import timedelta
 from typing import Any
 from typing import Generator
@@ -10,13 +11,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
-from db.dals import PortalRole
 
 import settings
+from db.models import PortalRole
 from db.session import get_db
 from main import app
-import sys
-
 from security import create_access_token
 
 # важно
@@ -61,10 +60,14 @@ async def clean_tables(async_session_test):
 async def _get_test_db():
     try:
         # create async engine for interaction with database
-        test_engine = create_async_engine(settings.TEST_DATABASE_URL, future=True, echo=True)
+        test_engine = create_async_engine(
+            settings.TEST_DATABASE_URL, future=True, echo=True
+        )
 
         # create session for the interaction with database
-        test_async_session = sessionmaker(test_engine, expire_on_commit=False, class_=AsyncSession)
+        test_async_session = sessionmaker(
+            test_engine, expire_on_commit=False, class_=AsyncSession
+        )
         yield test_async_session()
     finally:
         pass
@@ -115,7 +118,6 @@ async def create_user_in_database(asyncpg_pool):
     ):
         async with asyncpg_pool.acquire() as connection:
             return await connection.execute(
-                """INSERT INTO users VALUES ($1, $2, $3, $4, $5, $6)""",
                 """INSERT INTO users VALUES ($1, $2, $3, $4, $5, $6, $7)""",
                 user_id,
                 name,
@@ -125,7 +127,9 @@ async def create_user_in_database(asyncpg_pool):
                 hashed_password,
                 roles,
             )
+
     return create_user_in_database
+
 
 def create_test_auth_headers_for_user(email: str) -> dict[str, str]:
     access_token = create_access_token(
