@@ -19,7 +19,9 @@ async def _create_new_user(body: UserCreate, session) -> ShowUser:
             surname=body.surname,
             email=body.email,
             hashed_password=Hasher.get_password_hash(body.password),
-            roles=[PortalRole.ROLE_PORTAL_USER, ]
+            roles=[
+                PortalRole.ROLE_PORTAL_USER,
+            ],
         )
         return ShowUser(
             user_id=user.user_id,
@@ -57,17 +59,14 @@ async def _get_user_by_id(user_id, session) -> Union[User, None]:
             user_id=user_id,
         )
         if user is not None:
-            return User
+            return user
 
 
 
-def check_user_permissions(
-        target_user: User,
-        current_user: User
-) -> bool:
+def check_user_permissions(target_user: User, current_user: User) -> bool:
     if PortalRole.ROLE_PORTAL_SUPERADMIN in current_user.roles:
         raise HTTPException(
-            status_code=403, detail="Superadmin cannot be deleted via API."
+            status_code=406, detail="Superadmin cannot be deleted via API."
         )
     if target_user.user_id != current_user.user_id:
         # check admin role
