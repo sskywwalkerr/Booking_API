@@ -9,15 +9,19 @@ from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-import settings
+from utilities import settings
 from api.models import Token
 from db.dals import UserDAL
 from db.models import User
 from db.session import get_db
-from hashing import Hasher
-from security import create_access_token
+from utilities.hashing import Hasher
+from utilities.security import create_access_token
 
 login_router = APIRouter()
+
+
+# Обработчики  аутентификации
+
 
 async def _get_user_by_email_for_auth(email: str, db: AsyncSession):
     async with db as session:
@@ -26,7 +30,6 @@ async def _get_user_by_email_for_auth(email: str, db: AsyncSession):
             return await user_dal.get_user_by_email(
                 email=email,
             )
-
 
 
 async def authenticate_user(email: str, password: str, db: AsyncSession) -> Union[User, None]:
@@ -53,6 +56,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
+
 
 async def get_current_user_from_token(
         token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)

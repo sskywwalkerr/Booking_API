@@ -1,9 +1,7 @@
 from logging import getLogger
 from uuid import UUID
 
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
+from fastapi import APIRouter, HTTPException, Depends, FastAPI
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,11 +18,15 @@ from api.models import UpdateUserRequest
 from api.models import UserCreate
 from db.session import get_db
 from db.models import User
-
+from parsers.web_parsers import parse_product_page
 
 logger = getLogger(__name__)
 
 user_router = APIRouter()
+app = FastAPI()
+
+
+# Обработчики  API
 
 
 @user_router.post("/", response_model=ShowUser)
@@ -34,7 +36,6 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> S
     except IntegrityError as err:
         logger.error(err)
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
-
 
 
 @user_router.delete("/", response_model=DeleteUserResponse)
@@ -100,6 +101,7 @@ async def grant_admin_privilege(
         )
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
+
 @user_router.delete("/admin_privilege", response_model=UpdatedUserResponse)
 async def revoke_admin_privilege(
     user_id: UUID,
@@ -133,6 +135,7 @@ async def revoke_admin_privilege(
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
+
 @user_router.get("/", response_model=ShowUser)
 async def get_user_by_id(
     user_id: UUID,
@@ -145,6 +148,8 @@ async def get_user_by_id(
             status_code=404, detail=f"User with id {user_id} not found."
         )
     return user
+
+
 @user_router.patch("/", response_model=UpdatedUserResponse)
 async def update_user_by_id(
     user_id: UUID,
@@ -177,3 +182,11 @@ async def update_user_by_id(
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
+
+# @user_router.get("/parse_product/{url}")
+# async def parse_product(url: str):
+#   try:
+#     product_data = parse_product_page(url)
+#     return product_data
+#   except Exception as e:
+#     raise HTTPException(status_code=400, detail=f"Error parsing product: {e}")

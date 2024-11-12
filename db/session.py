@@ -3,8 +3,9 @@ from typing import Generator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-import settings
+from utilities import settings
 
+# Функции  для  создания  и  управления  сессиями
 ##############################################
 # BLOCK FOR COMMON INTERACTION WITH DATABASE #
 ##############################################

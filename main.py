@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 from fastapi.routing import APIRouter
 
-import settings
+from utilities import settings
 from api.handlers import user_router
 from api.login_handler import login_router
 

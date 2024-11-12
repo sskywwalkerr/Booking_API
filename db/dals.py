@@ -9,12 +9,13 @@ from db.models import User
 ###########################################################
 # BLOCK FOR INTERACTION WITH DATABASE IN BUSINESS CONTEXT #
 ###########################################################
+# Data Access Layer, слой доступа к данным
+
 
 class PortalRole(str, Enum):
     ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
     ROLE_PORTAL_ADMIN = "ROLE_PORTAL_ADMIN"
     ROLE_PORTAL_SUPERADMIN = "ROLE_PORTAL_SUPERADMIN"
-
 
 
 class UserDAL:

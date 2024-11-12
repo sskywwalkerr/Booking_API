@@ -6,14 +6,18 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-import settings
+from utilities import settings
 from db.dals import UserDAL
 from db.models import User
 from db.session import get_db
-from hashing import Hasher
+from utilities.hashing import Hasher
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
+
+
+# Логика  авторизации
+
 
 async def _get_user_by_email_for_auth(email: str, session: AsyncSession):
     async with session.begin():
@@ -21,7 +25,6 @@ async def _get_user_by_email_for_auth(email: str, session: AsyncSession):
         return await user_dal.get_user_by_email(
             email=email,
         )
-
 
 
 async def authenticate_user(

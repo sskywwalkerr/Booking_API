@@ -2,13 +2,15 @@ from typing import Union
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.models import ShowUser
 from api.models import UserCreate
 from db.dals import UserDAL, PortalRole
 from db.models import User
-from hashing import Hasher
+from utilities.hashing import Hasher
+
+
+# Логика  работы  с  пользователями
 
 
 async def _create_new_user(body: UserCreate, session) -> ShowUser:
@@ -60,7 +62,6 @@ async def _get_user_by_id(user_id, session) -> Union[User, None]:
         )
         if user is not None:
             return user
-
 
 
 def check_user_permissions(target_user: User, current_user: User) -> bool:

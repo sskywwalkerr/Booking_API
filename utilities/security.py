@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import JWTError, jwt
+from jose import jwt
 
 import settings
 
+
+#  Функции  безопасности  (JWT)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
