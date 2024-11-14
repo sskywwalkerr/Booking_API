@@ -1,7 +1,8 @@
 from logging import getLogger
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Depends, FastAPI
+from fastapi import APIRouter, HTTPException, Depends
+from requests import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,12 +19,16 @@ from api.models import UpdateUserRequest
 from api.models import UserCreate
 from db.session import get_db
 from db.models import User
-from parsers.web_parsers import parse_product_page
+
+from db.session import get_db
+from sqlalchemy.orm import Session
+from services.parser_service import ParserService
 
 logger = getLogger(__name__)
 
 user_router = APIRouter()
-app = FastAPI()
+router = APIRouter()
+
 
 
 # Обработчики  API
@@ -183,10 +188,11 @@ async def update_user_by_id(
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
 
-# @user_router.get("/parse_product/{url}")
-# async def parse_product(url: str):
-#   try:
-#     product_data = parse_product_page(url)
-#     return product_data
-#   except Exception as e:
-#     raise HTTPException(status_code=400, detail=f"Error parsing product: {e}")
+@router.post("/parse/")
+async def parse_products(url: str, db: AsyncSession = Depends(get_db)):
+    service = ParserService(db)
+    try:
+        products = await service.parse_and_save(url)
+        return {"products": products}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
