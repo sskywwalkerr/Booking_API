@@ -1,35 +1,40 @@
 from logging import getLogger
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Depends, FastAPI
-
+from fastapi import APIRouter, HTTPException, Depends
+from requests import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.user import check_user_permissions
 from api.actions.auth import get_current_user_from_token
-from api.actions.user import _create_new_user, _delete_user, _get_user_by_id, _update_user
+from api.actions.user import _create_new_user
+from api.actions.user import _delete_user
+from api.actions.user import _get_user_by_id
+from api.actions.user import _update_user
 from api.models import DeleteUserResponse
 from api.models import ShowUser
 from api.models import UpdatedUserResponse
 from api.models import UpdateUserRequest
 from api.models import UserCreate
-
 from db.session import get_db
 from db.models import User
 
+from db.session import get_db
+from sqlalchemy.orm import Session
+from services.parser_service import ParserService
 
 logger = getLogger(__name__)
 
-app = FastAPI()
 user_router = APIRouter()
 router = APIRouter()
 
 
-# Routers API
+
+# Обработчики  API
 
 
-@user_router.post("/create_user", response_model=ShowUser)
+@user_router.post("/", response_model=ShowUser)
 async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> ShowUser:
     try:
         return await _create_new_user(body, db)
@@ -38,7 +43,7 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> S
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
 
 
-@user_router.delete("/delete_user", response_model=DeleteUserResponse)
+@user_router.delete("/", response_model=DeleteUserResponse)
 async def delete_user(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -136,7 +141,7 @@ async def revoke_admin_privilege(
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
 
-@user_router.get("/get_user_by_id", response_model=ShowUser)
+@user_router.get("/", response_model=ShowUser)
 async def get_user_by_id(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -150,7 +155,7 @@ async def get_user_by_id(
     return user
 
 
-@user_router.patch("/update_user_by_id", response_model=UpdatedUserResponse)
+@user_router.patch("/", response_model=UpdatedUserResponse)
 async def update_user_by_id(
     user_id: UUID,
     body: UpdateUserRequest,
@@ -183,6 +188,11 @@ async def update_user_by_id(
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@router.post("/parse/")
+async def parse_products(url: str, db: AsyncSession = Depends(get_db)):
+    service = ParserService(db)
+    try:
+        products = await service.parse_and_save(url)
+        return {"products": products}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
