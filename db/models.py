@@ -1,12 +1,12 @@
 import uuid
 from enum import Enum
 
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import String
+from sqlalchemy import Boolean, Column, String, Integer
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
+
+
 
 ##############################
 # BLOCK WITH DATABASE MODELS #
@@ -47,3 +47,12 @@ class User(Base):
     def remove_admin_privileges_from_model(self):
         if self.is_admin:
             return {role for role in self.roles if role != PortalRole.ROLE_PORTAL_ADMIN}
+
+
+class Product(Base):
+    __tablename__ = 'products'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    price = Column(String)
+    url = Column(String)
