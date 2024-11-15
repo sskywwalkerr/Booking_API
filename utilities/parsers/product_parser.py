@@ -1,4 +1,5 @@
 # Парсеры для конкретных сайтов
+<<<<<<< HEAD
 import requests
 import json
 import os
@@ -138,3 +139,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+=======
+>>>>>>> 25aada7 (new function)
