@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import jwt
 
-import settings
+from utilities import settings
 
 
 #  Функции  безопасности  (JWT)
