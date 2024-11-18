@@ -1,7 +1,9 @@
 from logging import getLogger
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Depends
+import requests
+from fastapi import APIRouter, HTTPException, Depends, FastAPI
+from pydantic import BaseModel
 from requests import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,10 +24,11 @@ from db.models import User
 
 from db.session import get_db
 from sqlalchemy.orm import Session
-from services.parser_service import ParserService
+from parsers.web_parsers import get_page, get_json
 
 logger = getLogger(__name__)
 
+app = FastAPI()
 user_router = APIRouter()
 router = APIRouter()
 
@@ -188,11 +191,30 @@ async def update_user_by_id(
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
 
+# @router.post("/parse/")
+# async def parse_products(url: str, db: AsyncSession = Depends(get_db)):
+#     service = ParserService(db)
+#     try:
+#         products = await service.parse_and_save(url)
+#         return {"products": products}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+class URLRequest(BaseModel):
+    url: str
+
+
 @router.post("/parse/")
-async def parse_products(url: str, db: AsyncSession = Depends(get_db)):
-    service = ParserService(db)
+async def parse_url(request: URLRequest):
     try:
-        products = await service.parse_and_save(url)
-        return {"products": products}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        get_json(request.url)
+        return {"message": "Страница успешно загружена и сохранена.", "url": request.url}
+    except requests.HTTPError as http_err:
+        raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=str(err))
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
