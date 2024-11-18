@@ -1,4 +1,3 @@
-# Функции парсинга конкретных веб-страниц
 import requests
 import json
 
@@ -229,4 +228,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
