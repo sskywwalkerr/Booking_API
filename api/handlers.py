@@ -24,7 +24,7 @@ from db.models import User
 
 from db.session import get_db
 from sqlalchemy.orm import Session
-from parsers.web_parsers import get_page, get_json
+from parsers.web_parsers import get_data, get_result
 
 logger = getLogger(__name__)
 
@@ -207,7 +207,7 @@ class URLRequest(BaseModel):
 @router.post("/parse/")
 async def parse_url(request: URLRequest):
     try:
-        get_json(request.url)
+        get_result(request.url)
         return {"message": "Страница успешно загружена и сохранена.", "url": request.url}
     except requests.HTTPError as http_err:
         raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
