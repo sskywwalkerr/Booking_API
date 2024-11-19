@@ -1,10 +1,12 @@
-from typing import Union
+from typing import Union, Dict
 from uuid import UUID
 from enum import Enum
 from sqlalchemy import update, and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import User
+from sqlalchemy.orm import Session
+
+from db.models import User, Product
 
 ###########################################################
 # BLOCK FOR INTERACTION WITH DATABASE IN BUSINESS CONTEXT #
@@ -69,3 +71,18 @@ class UserDAL:
         update_user_id_row = res.fetchone()
         if update_user_id_row is not None:
             return update_user_id_row[0]
+
+
+class ProductDAL:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def create_product(self, product: Product):
+        self.db.add(product)
+        await self.db.commit()
+        await self.db.refresh(product)
+        return product
+
+    async def get_all_products(self):
+        result = await self.db.execute((select(Product)))
+        return result.scalars().all()
