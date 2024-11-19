@@ -1,19 +1,15 @@
+import requests
 from logging import getLogger
 from uuid import UUID
 
-import requests
 from fastapi import APIRouter, HTTPException, Depends, FastAPI
 from pydantic import BaseModel
-from requests import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.user import check_user_permissions
 from api.actions.auth import get_current_user_from_token
-from api.actions.user import _create_new_user
-from api.actions.user import _delete_user
-from api.actions.user import _get_user_by_id
-from api.actions.user import _update_user
+from api.actions.user import _create_new_user, _delete_user, _get_user_by_id, _update_user
 from api.models import DeleteUserResponse
 from api.models import ShowUser
 from api.models import UpdatedUserResponse
@@ -22,8 +18,6 @@ from api.models import UserCreate
 from db.session import get_db
 from db.models import User
 
-from db.session import get_db
-from sqlalchemy.orm import Session
 from parsers.web_parsers import get_data, get_result
 
 logger = getLogger(__name__)
@@ -31,7 +25,6 @@ logger = getLogger(__name__)
 app = FastAPI()
 user_router = APIRouter()
 router = APIRouter()
-
 
 
 # Обработчики  API
@@ -191,15 +184,6 @@ async def update_user_by_id(
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
 
-# @router.post("/parse/")
-# async def parse_products(url: str, db: AsyncSession = Depends(get_db)):
-#     service = ParserService(db)
-#     try:
-#         products = await service.parse_and_save(url)
-#         return {"products": products}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
 class URLRequest(BaseModel):
     url: str
 
@@ -217,4 +201,3 @@ async def parse_url(request: URLRequest):
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
