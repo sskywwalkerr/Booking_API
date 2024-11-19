@@ -188,8 +188,19 @@ class URLRequest(BaseModel):
     url: str
 
 
-@router.post("/parse/")
-async def parse_url(request: URLRequest):
+@router.post("/parse/data")
+async def parse_data(request: URLRequest):
+    try:
+        get_data(request.url)
+        return {"message": "Страница успешно загружена и сохранена.", "url": request.url}
+    except requests.HTTPError as http_err:
+        raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=str(err))
+
+
+@router.post("/parse/result")
+async def parse_result(request: URLRequest):
     try:
         get_result(request.url)
         return {"message": "Страница успешно загружена и сохранена.", "url": request.url}
@@ -197,6 +208,7 @@ async def parse_url(request: URLRequest):
         raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
+
 
 if __name__ == '__main__':
     import uvicorn
