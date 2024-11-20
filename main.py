@@ -11,7 +11,7 @@ from api.handlers import router as api_router
 #######################
 
 app = FastAPI(title="API Project")
-app.include_router(api_router, prefix="/api", tags=["api"])
+app.include_router(api_router, prefix="/api", tags=["parsers"])
 # create the instance for the routes
 main_api_router = APIRouter()
 
