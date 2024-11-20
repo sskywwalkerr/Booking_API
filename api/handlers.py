@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.user import check_user_permissions
-from api.actions.auth import get_current_user_from_token
+from api.actions.auth import get_current_user_from_token, get_current_user
 from api.actions.user import _create_new_user, _delete_user, _get_user_by_id, _update_user
 from api.models import DeleteUserResponse
 from api.models import ShowUser
@@ -200,10 +200,13 @@ async def parse_data(request: URLRequest):
 
 
 @router.post("/parse/result")
-async def parse_result(request: URLRequest):
+async def parse_result(request: URLRequest, current_user: User = Depends(get_current_user)):
+    if not current_user.is_authenticated:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     try:
-        get_result(request.url)
-        return {"message": "Страница успешно загружена и сохранена.", "url": request.url}
+        result = get_result(request.url)  # Assuming get_result handles file I/O
+        return {"message": "Parsing successful.", "result": result, "url": request.url}
     except requests.HTTPError as http_err:
         raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
     except Exception as err:
