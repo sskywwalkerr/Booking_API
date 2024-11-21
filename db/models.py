@@ -1,7 +1,7 @@
 import uuid
 from enum import Enum
 
-from sqlalchemy import Boolean, Column, String, Integer
+from sqlalchemy import Boolean, Column, String, Integer, Float
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
@@ -50,9 +50,11 @@ class User(Base):
 
 
 class Product(Base):
-    __tablename__ = 'products'
+    __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    price = Column(String)
-    url = Column(String)
+    name = Column(String)
+    base_price = Column(Float)
+    sale_price = Column(Float)
+    bonus = Column(Float)
+    link = Column(String)
