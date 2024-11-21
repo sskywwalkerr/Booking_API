@@ -18,7 +18,7 @@ from api.models import UserCreate
 from db.session import get_db
 from db.models import User
 
-from parsers.web_parsers import get_data, get_result
+from utilities.parsers.product_parser import get_data, get_result
 
 logger = getLogger(__name__)
 
