@@ -3,8 +3,7 @@ from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
-from jose import JWTError
+from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from utilities import settings
 from db.dals import UserDAL
