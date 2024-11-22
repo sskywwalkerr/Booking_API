@@ -1,24 +1,23 @@
-import requests
 from logging import getLogger
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Depends, FastAPI
-from pydantic import BaseModel
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.user import check_user_permissions
-from api.actions.auth import get_current_user_from_token, get_current_user
+from api.actions.auth import get_current_user_from_token
 from api.actions.user import _create_new_user, _delete_user, _get_user_by_id, _update_user
 from api.models import DeleteUserResponse
 from api.models import ShowUser
 from api.models import UpdatedUserResponse
 from api.models import UpdateUserRequest
 from api.models import UserCreate
+
 from db.session import get_db
 from db.models import User
 
-from utilities.parsers.product_parser import get_data, get_result
 
 logger = getLogger(__name__)
 
@@ -27,7 +26,7 @@ user_router = APIRouter()
 router = APIRouter()
 
 
-# Обработчики  API
+# Routers API
 
 
 @user_router.post("/", response_model=ShowUser)
@@ -182,35 +181,6 @@ async def update_user_by_id(
         logger.error(err)
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
     return UpdatedUserResponse(updated_user_id=updated_user_id)
-
-
-class URLRequest(BaseModel):
-    url: str
-
-
-@router.post("/parse/data")
-async def parse_data(request: URLRequest):
-    try:
-        get_data(request.url)
-        return {"message": "Страница успешно загружена и сохранена.", "url": request.url}
-    except requests.HTTPError as http_err:
-        raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
-    except Exception as err:
-        raise HTTPException(status_code=500, detail=str(err))
-
-
-@router.post("/parse/result")
-async def parse_result(request: URLRequest, current_user: User = Depends(get_current_user)):
-    if not current_user.is_authenticated:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    try:
-        result = get_result(request.url)  # Assuming get_result handles file I/O
-        return {"message": "Parsing successful.", "result": result, "url": request.url}
-    except requests.HTTPError as http_err:
-        raise HTTPException(status_code=http_err.response.status_code, detail=str(http_err))
-    except Exception as err:
-        raise HTTPException(status_code=500, detail=str(err))
 
 
 if __name__ == '__main__':

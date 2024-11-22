@@ -6,6 +6,7 @@ from utilities import settings
 from api.handlers import user_router
 from api.login_handler import login_router
 from api.handlers import router as api_router
+from utilities.parsers.handlers_parser import router as api_router
 #######################
 # BLOCK WITH API ROUTES #
 #######################
