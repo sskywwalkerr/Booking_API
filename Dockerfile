@@ -1,23 +1,12 @@
-ARG BASE_IMAGE=python:3.9-slim-buster
-FROM $BASE_IMAGE
+FROM python:3.8.3
 
-# system update & package install
-RUN apt-get -y update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    openssl libssl-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /usr/src/app/
+WORKDIR /usr/src/app/
 
-COPY . .
-WORKDIR .
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# pip & poetry
-RUN python3 -m pip install --user --upgrade pip && \
-    python3 -m pip install -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install fastapi uvicorn redis aiohttp fastapi_utils
 
-# Configration
-EXPOSE 8000
-
-# Execute
-CMD ["python", "main.py"]
+COPY . /usr/src/app/
