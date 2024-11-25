@@ -29,7 +29,7 @@ router = APIRouter()
 # Routers API
 
 
-@user_router.post("/", response_model=ShowUser)
+@user_router.post("/create_user", response_model=ShowUser)
 async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> ShowUser:
     try:
         return await _create_new_user(body, db)
@@ -38,7 +38,7 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> S
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
 
 
-@user_router.delete("/", response_model=DeleteUserResponse)
+@user_router.delete("/delete_user", response_model=DeleteUserResponse)
 async def delete_user(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -136,7 +136,7 @@ async def revoke_admin_privilege(
     return UpdatedUserResponse(updated_user_id=updated_user_id)
 
 
-@user_router.get("/", response_model=ShowUser)
+@user_router.get("/get_user_by_id", response_model=ShowUser)
 async def get_user_by_id(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -150,7 +150,7 @@ async def get_user_by_id(
     return user
 
 
-@user_router.patch("/", response_model=UpdatedUserResponse)
+@user_router.patch("/update_user_by_id", response_model=UpdatedUserResponse)
 async def update_user_by_id(
     user_id: UUID,
     body: UpdateUserRequest,

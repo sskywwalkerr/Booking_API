@@ -1,13 +1,8 @@
 from datetime import timedelta
 from typing import Union
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
-from fastapi import status
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.security import OAuth2PasswordRequestForm
-from jose import jwt
-from jose import JWTError
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from utilities import settings
 from api.models import Token

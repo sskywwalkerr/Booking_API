@@ -1,3 +1,9 @@
+import json
+
+import redis
+from utilities.redis_tools.tools import get_redis_client
+from fastapi import Depends
+
 from typing import Union
 from uuid import UUID
 
@@ -89,3 +95,26 @@ def check_user_permissions(target_user: User, current_user: User) -> bool:
         ):
             return False
     return True
+
+
+# async def cache_user(user, redis_client: redis.Redis=Depends(get_redis_client)):
+#     try:
+#         if redis_client:
+#             user_data = user.dict(exclude={"hashed_password"})
+#             redis_client.set(f"user:{user.user_id}", json.dumps(user_data), ex=3600)
+#         return False  # Не удалось подключиться к Redis
+#     except Exception as e:
+#         print(f"Ошибка кэширования пользователя: {e}")
+#         return False
+#
+#
+# async def get_cached_user(user_id: int, redis_client:redis.Redis=Depends(get_redis_client)):
+#     try:
+#         if redis_client:
+#             cached_data = redis_client.get(f"user:{user_id}")
+#             if cached_data:
+#                 return json.loads(cached_data)
+#         return None
+#     except Exception as e:
+#         print(f"Ошибка получения пользователя из кэша: {e}")
+#         return None

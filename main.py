@@ -6,15 +6,14 @@ from utilities import settings
 from api.handlers import user_router
 from api.login_handler import login_router
 from utilities.parsers.handlers_parser import router as api_router
-
-from redis_om import get_redis_connection
 #######################
 # BLOCK WITH API ROUTES #
 #######################
 
 app = FastAPI(title="API Project")
 app.include_router(api_router, prefix="/api", tags=["parsers"])
-# create the instance for the routes
+
+# instance for the routes
 main_api_router = APIRouter()
 
 # set routes to the app instance

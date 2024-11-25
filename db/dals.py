@@ -73,16 +73,16 @@ class UserDAL:
             return update_user_id_row[0]
 
 
-class ProductDAL:
-    def __init__(self, db: AsyncSession):
-        self.db = db
-
-    async def create_product(self, product: Product):
-        self.db.add(product)
-        await self.db.commit()
-        await self.db.refresh(product)
-        return product
-
-    async def get_all_products(self):
-        result = await self.db.execute((select(Product)))
-        return result.scalars().all()
+# class ProductDAL:
+#     def __init__(self, db: AsyncSession):
+#         self.db = db
+#
+#     async def create_product(self, product: Product):
+#         self.db.add(product)
+#         await self.db.commit()
+#         await self.db.refresh(product)
+#         return product
+#
+#     async def get_all_products(self):
+#         result = await self.db.execute((select(Product)))
+#         return result.scalars().all()

@@ -1,6 +1,6 @@
 import re
 import uuid
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import HTTPException
 from pydantic import BaseModel, EmailStr, validator, constr
@@ -16,7 +16,7 @@ class TunedModel(BaseModel):
     class Config:
         """tells pydantic to convert even non dict obj to json"""
 
-        orm_mode = True
+        from_attributes = True
 
 
 class ShowUser(TunedModel):

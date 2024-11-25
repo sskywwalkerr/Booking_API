@@ -1,9 +1,7 @@
 """settings  and configs  for the project"""
 import os
-
 from envparse import Env
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Optional
 
 env = Env()
 
@@ -24,14 +22,12 @@ TEST_DATABASE_URL = env.str(
 )# connect string for the database
 
 
-class Settings(BaseSettings):
-    database_url: str = os.environ.get("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/postgres") #Настройка вашей базы данных
-    redis_host: str = os.environ.get("REDIS_HOST", "localhost")  # Хост Redis
-    redis_port: int = int(os.environ.get("REDIS_PORT", 6379))  # Порт Redis
-    redis_db: int = int(os.environ.get("REDIS_DB", 0))  # Номер базы данных Redis
-    secret_key: str = os.environ.get("SECRET_KEY","21sdfas1") #Добавьте секретный ключ!
-
-    model_config = SettingsConfigDict(env_file=".env") #Читаем переменные окружения из .env
-
-settings = Settings()
-
+# class Settings(BaseSettings):
+#     redis_host: str = os.environ.get("REDIS_HOST", "localhost")
+#     redis_port: int = int(os.environ.get("REDIS_PORT", 6379))
+#     redis_db: int = int(os.environ.get("REDIS_DB", 0))
+#     # redis_password: str = os.environ.get("REDIS_PASSWORD")
+#
+#     model_config = SettingsConfigDict(env_file=".env")
+#
+# settings = Settings()

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 from utilities.parsers.product_parser import get_data, get_result
-from utilities.redis_tools.tools import RedisTools
+# from utilities.redis_tools.tools import RedisTools
 
 logger = getLogger(__name__)
 
