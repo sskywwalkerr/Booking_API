@@ -1,5 +1,4 @@
 # Парсеры для конкретных сайтов
-<<<<<<< HEAD
 import requests
 import json
 import os
