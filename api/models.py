@@ -1,6 +1,6 @@
 import re
 import uuid
-from typing import Optional, List
+from typing import Optional
 
 from fastapi import HTTPException
 from pydantic import BaseModel, EmailStr, validator, constr

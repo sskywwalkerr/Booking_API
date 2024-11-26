@@ -1,9 +1,3 @@
-import json
-
-import redis
-from utilities.redis_tools.tools import get_redis_client
-from fastapi import Depends
-
 from typing import Union
 from uuid import UUID
 

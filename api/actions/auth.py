@@ -1,15 +1,17 @@
 from typing import Union
-from fastapi import Depends
-from fastapi import HTTPException
-from fastapi import status
+
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+
 from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-from utilities import settings
+
 from db.dals import UserDAL
 from db.models import User
 from db.session import get_db
+
 from utilities.hashing import Hasher
+from utilities import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 

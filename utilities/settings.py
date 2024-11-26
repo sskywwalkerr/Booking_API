@@ -22,12 +22,12 @@ TEST_DATABASE_URL = env.str(
 )# connect string for the database
 
 
-# class Settings(BaseSettings):
-#     redis_host: str = os.environ.get("REDIS_HOST", "localhost")
-#     redis_port: int = int(os.environ.get("REDIS_PORT", 6379))
-#     redis_db: int = int(os.environ.get("REDIS_DB", 0))
-#     # redis_password: str = os.environ.get("REDIS_PASSWORD")
-#
-#     model_config = SettingsConfigDict(env_file=".env")
-#
-# settings = Settings()
+class Settings(BaseSettings):
+    redis_host: str = os.environ.get("REDIS_HOST", "localhost")
+    redis_port: int = int(os.environ.get("REDIS_PORT", 6379))
+    redis_db: int = int(os.environ.get("REDIS_DB", 0))
+    # redis_password: str = os.environ.get("REDIS_PASSWORD")
+
+    model_config = SettingsConfigDict(env_file=".env")
+
+settings = Settings()
