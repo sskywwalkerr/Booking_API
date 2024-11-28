@@ -6,7 +6,7 @@ from itsdangerous import URLSafeTimedSerializer
 import jwt
 from passlib.context import CryptContext
 
-from config import Config
+from api.config import Config
 
 passwd_context = CryptContext(schemes=["bcrypt"])
 
