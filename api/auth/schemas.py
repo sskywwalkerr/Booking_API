@@ -4,8 +4,8 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from api.books.schemas import Book
-from api.reviews.schemas import ReviewModel
+# from api.books.schemas import Book
+# from api.reviews.schemas import ReviewModel
 
 
 class UserCreateModel(BaseModel):
@@ -40,9 +40,9 @@ class UserModel(BaseModel):
     update_at: datetime
 
 
-class UserBooksModel(UserModel):
-    books: List[Book]
-    reviews: List[ReviewModel]
+# class UserBooksModel(UserModel):
+#     books: List[Book]
+#     reviews: List[ReviewModel]
 
 
 class UserLoginModel(BaseModel):
@@ -51,7 +51,7 @@ class UserLoginModel(BaseModel):
 
 
 class EmailModel(BaseModel):
-    addresses : List[str]
+    addresses: List[str]
 
 
 class PasswordResetRequestModel(BaseModel):
