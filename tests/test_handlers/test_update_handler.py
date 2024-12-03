@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from db.models import PortalRole
+from api.db import PortalRole
 from tests.conftest import create_test_auth_headers_for_user
 
 

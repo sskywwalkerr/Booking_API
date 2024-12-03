@@ -13,9 +13,9 @@ from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
 from utilities import settings
-from db.models import PortalRole
-from db.session import get_db
-from main import app
+from api.db import PortalRole
+from api.db import get_db
+from api.db import app
 from utilities.security import create_access_token
 
 # важно
