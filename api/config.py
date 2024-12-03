@@ -1,3 +1,6 @@
+# from typing import List
+# from pydantic import BaseModel
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,3 +29,8 @@ Config = Settings()
 broker_url = Config.REDIS_URL
 result_backend = Config.REDIS_URL
 broker_connection_retry_on_startup = True
+
+# class MailBody(BaseModel):
+#     to: List[str]
+#     subject: str
+#     body: str
