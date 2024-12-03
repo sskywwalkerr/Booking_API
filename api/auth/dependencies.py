@@ -75,6 +75,7 @@ async def get_current_user(
 
     return user
 
+
 class RoleChecker:
     def __init__(self, allowed_roles: List[str]) -> None:
         self.allowed_roles = allowed_roles
