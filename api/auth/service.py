@@ -44,4 +44,3 @@ class UserService:
         await session.commit()
 
         return user
-
