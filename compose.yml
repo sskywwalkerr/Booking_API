@@ -56,7 +56,7 @@ services:
   celery:
     build: .
 
-    command: celery -A src.celery_tasks.c_app worker --loglevel=INFO
+    command: celery -A api.celery_tasks.c_app worker --loglevel=INFO
 
     volumes:
       - .:/app
