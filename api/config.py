@@ -1,6 +1,3 @@
-# from typing import List
-# from pydantic import BaseModel
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,7 +10,7 @@ class Settings(BaseSettings):
     MAIL_PASSWORD: str
     MAIL_FROM: str
     MAIL_PORT: int
-    MAIL_SERVER: str
+    MAIL_SERVER: str = "smtp.gmail.com"
     MAIL_FROM_NAME: str
     MAIL_STARTTLS: bool = True
     MAIL_SSL_TLS: bool = False
@@ -29,8 +26,3 @@ Config = Settings()
 broker_url = Config.REDIS_URL
 result_backend = Config.REDIS_URL
 broker_connection_retry_on_startup = True
-
-# class MailBody(BaseModel):
-#     to: List[str]
-#     subject: str
-#     body: str

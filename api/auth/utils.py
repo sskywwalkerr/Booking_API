@@ -1,7 +1,6 @@
 import jwt
 import logging
 import uuid
-
 from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
 

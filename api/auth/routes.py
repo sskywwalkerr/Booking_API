@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, status, BackgroundTasks, FastAPI
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -40,7 +40,7 @@ from api.auth.utils import (
 
 from api.config import Config
 
-app = FastAPI()
+
 auth_router = APIRouter()
 user_service = UserService()
 role_checker = RoleChecker(["admin", "user"])
@@ -58,7 +58,7 @@ async def send_mail(emails: EmailModel):
     html = "<h1>Welcome to the app</h1>"
     subject = "Welcome to our app"
 
-    send_email.delay(emails, subject, html)
+    send_email(emails, subject, html)
 
     return {"message": "Email sent successfully"}
 
@@ -96,7 +96,9 @@ async def create_user_Account(
 
     subject = "Verify Your email"
 
-    send_email.delay(emails, subject, html)
+    # send_email.delay(emails, subject, html)
+    bg_tasks.add_task(send_email, emails, subject, html)
+    # send_email(emails, subject, html)
 
     return {
         "message": "Account Created! Check email to verify your account",
