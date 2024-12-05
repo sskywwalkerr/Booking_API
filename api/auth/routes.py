@@ -133,43 +133,6 @@ async def verify_user_account(token: str, session: AsyncSession = Depends(get_se
     )
 
 
-# @auth_router.get("/verify/{token}")
-# async def verify_user_account(token: str, session: AsyncSession = Depends(get_session)):
-#     token_data = decode_url_safe_token(token)
-#
-#     if token_data is None:
-#         return JSONResponse(
-#             content={"message": "Invalid token"},
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#         )
-#
-#     if "email" not in token_data:
-#         return JSONResponse(
-#             content={"message": "Token is missing email attribute"},
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#         )
-#
-#     user_email = token_data["email"]
-#
-#     if user_email:
-#         user = await user_service.get_user_by_email(user_email, session)
-#
-#         if not user:
-#             raise UserNotFound()
-#
-#         await user_service.update_user(user, {"is_verified": True}, session)
-#
-#         return JSONResponse(
-#             content={"message": "Account verified successfully"},
-#             status_code=status.HTTP_200_OK,
-#         )
-#
-#     return JSONResponse(
-#         content={"message": "Error occurred during verification"},
-#         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#     )
-
-
 @auth_router.post("/login")
 async def login_users(
     login_data: UserLoginModel, session: AsyncSession = Depends(get_session)
@@ -295,11 +258,6 @@ async def reset_account_password(
         )
 
     return JSONResponse(
-        content={"message": "Error occured during password reset."},
+        content={"message": "Error occurred during password reset."},
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
-
-
-# if __name__ == '__main__':
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
