@@ -48,7 +48,7 @@ role_checker = RoleChecker(["admin", "user"])
 REFRESH_TOKEN_EXPIRY = 2
 
 
-# Bearer Token
+# Endpoints
 
 
 @auth_router.post("/send_mail")
@@ -182,13 +182,6 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
         return JSONResponse(content={"access_token": new_access_token})
 
     raise InvalidToken
-
-
-# @auth_router.get("/me", response_model=UserBooksModel)
-# async def get_current_user(
-#     user=Depends(get_current_user), _: bool = Depends(role_checker)
-# ):
-#     return user
 
 
 @auth_router.get("/logout")
