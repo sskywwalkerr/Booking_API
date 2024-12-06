@@ -59,6 +59,12 @@ class BookNotFound(BooklyException):
     pass
 
 
+class HotelNotFound(BooklyException):
+    """Book Not found"""
+
+    pass
+
+
 class TagNotFound(BooklyException):
     """Tag Not found"""
 
