@@ -37,7 +37,7 @@ class TokenBearer(HTTPBearer):
         if not self.token_valid(token):
             raise InvalidToken()
 
-        if await token_in_blocklist(token_data["jwt"]):
+        if await token_in_blocklist(token_data["jti"]):
             raise InvalidToken()
 
         self.verify_token_data(token_data)
@@ -66,7 +66,7 @@ class RefreshTokenBearer(TokenBearer):
 
 
 async def get_current_user(
-    token_details: dict = Depends(AccessTokenBearer),
+    token_details: dict = Depends(AccessTokenBearer()),
     session: AsyncSession = Depends(get_session),
 ):
     user_email = token_details["user"]["email"]
