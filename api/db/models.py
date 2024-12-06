@@ -102,3 +102,49 @@ class Review(SQLModel, table=True):
     def __repr__(self):
         return f"<Review for book {self.book_uid} by user {self.user_uid}>"
 
+
+class Hotel(SQLModel, table=True):
+    __tablename__ = "hotel"
+    uid: uuid.UUID = Field(
+        sa_column=Column(pg.UUID, nullable=False, primary_key=True, default=uuid.uuid4)
+    )
+    name: str = Field(sa_column=Column(pg.VARCHAR, nullable=False))
+    location: str
+    description: str
+    rating: float
+    rooms: str
+    published_date: date
+    user_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="users.uid")
+    added_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+    update_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+
+    def __repr__(self):
+        return f"<hotel {self.title}>"
+
+
+class Room(SQLModel, table=True):
+    __tablename__ = "room"
+    uid: uuid.UUID = Field(
+        sa_column=Column(pg.UUID, nullable=False, primary_key=True, default=uuid.uuid4)
+    )
+    hotel_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="hotel.uid")
+    price: float
+    room_type: str
+
+    def __repr__(self):
+        return f"<room {self.title}>"
+
+
+class Reservation(SQLModel, table=True):
+    __tablename__ = "reservation"
+    uid: uuid.UUID = Field(
+        sa_column=Column(pg.UUID, nullable=False, primary_key=True, default=uuid.uuid4)
+    )
+    user_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="users.uid")
+    room_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="room.uid")
+    start_date: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+    end_date: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime))
+    status: str
+
+    def __repr__(self):
+        return f"<Reservation {self.title}>"
