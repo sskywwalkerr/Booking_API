@@ -11,6 +11,7 @@ class Hotel(BaseModel):
     location: str
     description: str
     rating: float
+    published_date: date
     rooms: str
     added_at: datetime
     update_at: datetime

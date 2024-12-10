@@ -36,7 +36,7 @@ class User(SQLModel, table=True):
 
 
 class Hotel(SQLModel, table=True):
-    __tablename__ = "hotel"
+    __tablename__ = "hotels"
     uid: uuid.UUID = Field(
         sa_column=Column(pg.UUID, nullable=False, primary_key=True, default=uuid.uuid4)
     )
@@ -66,7 +66,7 @@ class Review(SQLModel, table=True):
     rating: int = Field(lt=5)
     review_text: str = Field(sa_column=Column(pg.VARCHAR, nullable=False))
     user_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="users.uid")
-    hotel_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="hotel.uid")
+    hotel_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="hotels.uid")
     created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
     update_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
     user: Optional[User] = Relationship(back_populates="reviews")
@@ -81,7 +81,7 @@ class Room(SQLModel, table=True):
     uid: uuid.UUID = Field(
         sa_column=Column(pg.UUID, nullable=False, primary_key=True, default=uuid.uuid4)
     )
-    hotel_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="hotel.uid")
+    hotel_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="hotels.uid")
     price: float
     room_type: str
 
