@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth.dependencies import RoleChecker, get_current_user
 from api.db.data import get_session
 from api.db.models import User
+from api.errors import HotelNotFound
 from api.reviews.schemas import ReviewCreateModel
 from api.reviews.service import ReviewService
 
@@ -24,8 +25,10 @@ async def get_all_reviews(session: AsyncSession = Depends(get_session)):
 async def get_review(review_uid: str, session: AsyncSession = Depends(get_session)):
     hotel = await review_service.get_review(review_uid, session)
 
-    if not hotel:
-        raise
+    if hotel is None:
+        raise HTTPException(status_code=404, detail="Error, this uid incorrect or does not")
+    else:
+        return hotel
 
 
 @review_router.post("/hotel/{hotel_uid}", dependencies=[user_role_checker])
@@ -55,8 +58,13 @@ async def delete_review(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    await review_service.delete_review_to_from_hotel(
+    review_to_delete = await review_service.delete_review_to_from_hotel(
         review_uid=review_uid, user_email=current_user.email, session=session
     )
+    if review_to_delete:
+        raise HTTPException(detail="Review deleted", status_code=200)
 
-    return None
+    # if review_to_delete is None:
+    #     raise HTTPException(detail="Review does not exist", status_code=404)
+    # else:
+    #     return {}
