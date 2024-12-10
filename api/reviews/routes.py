@@ -15,9 +15,9 @@ user_role_checker = Depends(RoleChecker(["user", "admin"]))
 
 @review_router.get("/", dependencies=[admin_role_checker])
 async def get_all_reviews(session: AsyncSession = Depends(get_session)):
-    hotel = await review_service.get_all_reviews(session)
+    hotels = await review_service.get_all_reviews(session)
 
-    return hotel
+    return hotels
 
 
 @review_router.get("/{review_uid}", dependencies=[user_role_checker])
@@ -28,14 +28,14 @@ async def get_review(review_uid: str, session: AsyncSession = Depends(get_sessio
         raise
 
 
-@review_router.post("/{hotel_uid}", dependencies=[user_role_checker])
-async def add_review_to_hotel(
+@review_router.post("/hotel/{hotel_uid}", dependencies=[user_role_checker])
+async def add_review_to_hotels(
     hotel_uid: str,
     review_data: ReviewCreateModel,
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    new_review = await review_service.add_review_to_hotel(
+    new_review = await review_service.add_review_to_hotels(
         user_email=current_user.email,
         review_data=review_data,
         hotel_uid=hotel_uid,
