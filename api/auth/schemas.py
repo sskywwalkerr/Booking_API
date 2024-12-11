@@ -4,9 +4,6 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-# from api.books.schemas import Book
-# from api.reviews.schemas import ReviewModel
-
 
 class UserCreateModel(BaseModel):
     first_name: str = Field(max_length=25)
@@ -38,11 +35,6 @@ class UserModel(BaseModel):
     password_hash: str = Field(exclude=True)
     created_at: datetime
     update_at: datetime
-
-
-# class UserBooksModel(UserModel):
-#     books: List[Book]
-#     reviews: List[ReviewModel]
 
 
 class UserLoginModel(BaseModel):
