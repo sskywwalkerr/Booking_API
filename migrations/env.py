@@ -23,9 +23,22 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from api.db.models import SQLModel
+# from api.db.models import SQLModel
+from api.database.db import Base
+
+from api.models import User
+from api.models import Hotel
+from api.models import Review
+from api.models import Room
+
+
+# from api.auth import models
+# from api.hotel import models
+# from api.reviews import models
+# from api.rooms import models
+
 # target_metadata = SQLModel.metadata
-target_metadata = SQLModel.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
