@@ -15,7 +15,7 @@ from api.errors import (
     AccountNotVerified,
     InsufficientPermission,
 )
-from api.db.models import User
+from api.models.User import User
 
 from api.db.redis import token_in_blocklist
 from api.db.data import get_session

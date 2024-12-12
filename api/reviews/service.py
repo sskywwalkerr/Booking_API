@@ -6,7 +6,7 @@ from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from api.auth.service import UserService
-from api.db.models import Review
+from api.models.Review import Review
 from api.hotel.service import HotelService
 
 from .schemas import ReviewCreateModel
