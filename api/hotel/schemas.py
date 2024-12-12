@@ -1,8 +1,6 @@
-import uuid
-from datetime import date, datetime
-from typing import List
-
 from pydantic import BaseModel
+from datetime import date, datetime
+import uuid
 
 
 class Hotel(BaseModel):
@@ -16,8 +14,6 @@ class Hotel(BaseModel):
     added_at: datetime
     update_at: datetime
 
-# class HotelDetailModel(BaseModel):
-
 
 class HotelCreateModel(BaseModel):
     name: str
@@ -26,6 +22,18 @@ class HotelCreateModel(BaseModel):
     rating: float
     rooms: str
     published_date: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "string",
+                "location": "string",
+                "description": "string",
+                "rating": 0,
+                "rooms": "string",
+                "published_date": "2023-01-01"
+            }
+        }
 
 
 class HotelUpdateModel(BaseModel):
