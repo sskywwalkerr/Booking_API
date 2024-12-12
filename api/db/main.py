@@ -4,6 +4,7 @@ from api.auth.routes import auth_router
 from api.db.data import init_db
 from api.hotel.routes import hotel_router
 from api.reviews.routes import review_router
+from api.rooms.routes import room_routes
 
 app = FastAPI(title="API Project")
 
@@ -19,6 +20,10 @@ main_api_router2 = APIRouter()
 main_api_router2.include_router(review_router, prefix="/review", tags=["review"])
 app.include_router(main_api_router2)
 
+
+main_api_router3 = APIRouter()
+main_api_router3.include_router(room_routes, prefix="/room", tags=["room"])
+app.include_router(main_api_router3)
 
 
 @app.on_event("startup")
