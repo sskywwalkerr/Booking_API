@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth.dependencies import RoleChecker, get_current_user
 from api.db.data import get_session
-from api.db.models import User
+from api.models import User
 from api.errors import HotelNotFound
 from api.reviews.schemas import ReviewCreateModel
 from api.reviews.service import ReviewService

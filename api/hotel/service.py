@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlmodel import desc, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from api.db.models import Hotel
+from api.models.Hotel import Hotel
 
 from .schemas import HotelCreateModel, HotelUpdateModel
 

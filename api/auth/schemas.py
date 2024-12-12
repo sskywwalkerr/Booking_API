@@ -1,8 +1,7 @@
-import uuid
-from datetime import datetime
-from typing import List
-
 from pydantic import BaseModel, Field
+from typing import List
+from uuid import UUID
+from datetime import datetime
 
 
 class UserCreateModel(BaseModel):
@@ -12,8 +11,8 @@ class UserCreateModel(BaseModel):
     email: str = Field(max_length=40)
     password: str = Field(min_length=6)
 
-    model_config = {
-        "json_schema_extra": {
+    class Config:
+        schema_extra = {
             "example": {
                 "first_name": "John",
                 "last_name": "Doe",
@@ -22,11 +21,10 @@ class UserCreateModel(BaseModel):
                 "password": "testpass123",
             }
         }
-    }
 
 
 class UserModel(BaseModel):
-    uid: uuid.UUID
+    uid: UUID
     username: str
     email: str
     first_name: str
