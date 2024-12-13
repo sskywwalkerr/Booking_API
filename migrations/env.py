@@ -30,6 +30,7 @@ from api.models import User
 from api.models import Hotel
 from api.models import Review
 from api.models import Room
+from api.models import Bookings
 
 
 # from api.auth import models
