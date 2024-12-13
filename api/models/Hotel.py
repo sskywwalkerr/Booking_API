@@ -25,7 +25,7 @@ class Hotel(Base):
 
     user = relationship("User", back_populates="hotels")
     reviews = relationship("Review", back_populates="hotel")
-    # rooms = relationship("Room", foreign_keys="Room.hotel_uid")
+    room = relationship("Room", back_populates="hotel")
 
     def __repr__(self):
         return f"<hotel {self.name}>"

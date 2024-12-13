@@ -25,6 +25,7 @@ class User(Base):
 
     hotels = relationship("Hotel", back_populates="user")
     reviews = relationship("Review", back_populates="user")
+    # booking = relationship("Booking", back_populates="user")
 
     def __repr__(self):
         return f"<User  {self.username}>"
