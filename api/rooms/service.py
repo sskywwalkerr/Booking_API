@@ -1,6 +1,8 @@
+from fastapi import HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
+from api.models.Hotel import Hotel
 from api.models.Room import Room
 from api.rooms.schemas import RoomCreateModel
 
@@ -9,36 +11,26 @@ class RoomService:
     async def create_room(
             self, room_data: RoomCreateModel, hotel_uid: str, session: AsyncSession
     ):
-        room_data_dict = room_data.model_dump()
+        # Проверяем, существует ли отель
+        hotel_exists = await session.execute(select(Hotel).where(Hotel.uid == hotel_uid))
+        if not hotel_exists.scalar():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel not found.")
 
-        new_room = Room(**room_data_dict)
-
-        new_room.hotel_uid = hotel_uid
-
+        # Создаем новую комнату
+        new_room = Room(**room_data.dict(), hotel_uid=hotel_uid)
         session.add(new_room)
-
         await session.commit()
-
+        await session.refresh(new_room)  # Обновляем объект, чтобы получить значения по умолчанию
         return new_room
 
-    async def get_room(self, room_uid: str, session: AsyncSession):
-        statement = select(Room).where(Room.uid == room_uid)
-
-        result = await session.exec(statement)
-
-        room = result.first()
-
-        return room if room is not None else None
-
     async def delete_room(self, room_uid: str, session: AsyncSession):
-        room_to_delete = await self.get_room(room_uid, session)
+        # Получаем комнату для удаления
+        room_to_delete = await session.execute(select(Room).where(Room.uid == room_uid))
+        room = room_to_delete.scalar_one_or_none()
 
-        if room_to_delete is not None:
-            await session.delete(room_to_delete)
-
+        if room is not None:
+            await session.delete(room)
             await session.commit()
-
             return {}
-
         else:
-            return None
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found.")
