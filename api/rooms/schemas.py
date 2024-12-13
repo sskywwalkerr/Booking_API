@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 import uuid
 
 
@@ -10,7 +11,7 @@ class RoomRead(BaseModel):
     description: str
     price: float
     quantity: int
-    hotel_uid: uuid.UUID
+    hotel_uid: Optional[uuid.UUID]
 
 
 class RoomCreateModel(BaseModel):
@@ -18,7 +19,4 @@ class RoomCreateModel(BaseModel):
     description: str
     price: float
     quantity: int
-
-    class Config:
-        orm_mode = True
 
