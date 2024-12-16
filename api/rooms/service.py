@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
+from api.dao.base import BaseDAO
 from api.models.Hotel import Hotel
 from api.models.Room import Room
 from api.rooms.schemas import RoomCreateModel
@@ -34,3 +35,8 @@ class RoomService:
             return {}
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found.")
+
+
+class RoomDAO(BaseDAO):
+    model = Room
+

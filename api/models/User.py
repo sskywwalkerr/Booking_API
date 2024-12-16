@@ -3,8 +3,13 @@ from sqlalchemy.dialects.postgresql import UUID as PGUUID, VARCHAR as PGVARCHAR
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from uuid import uuid4
+from typing import List
+from sqlalchemy.orm import Mapped
 
 from api.database.db import Base
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from api.models import Booking, Hotel, Review
 
 
 class User(Base):
@@ -23,9 +28,12 @@ class User(Base):
     created_at = Column(DateTime, default=func.now())
     update_at = Column(DateTime, default=func.now())
 
-    hotels = relationship("Hotel", back_populates="user")
-    reviews = relationship("Review", back_populates="user")
-    # booking = relationship("Booking", back_populates="user")
+    # bookings = relationship("Booking", back_populates="user")
+    # hotels = relationship("Hotel", back_populates="user")
+    # reviews = relationship("Review", back_populates="user")
+    bookings: Mapped[List["Booking"]] = relationship(back_populates="user")
+    hotels: Mapped[List["Hotel"]] = relationship(back_populates="user")
+    reviews: Mapped[List["Review"]] = relationship(back_populates="user")
 
     def __repr__(self):
         return f"<User  {self.username}>"
