@@ -1,8 +1,16 @@
 from typing import Any, Callable
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
+
+
+class MyBookingException(HTTPException):
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    detail = ''
+
+    def __init__(self):
+        super().__init__(status_code=self.status_code, detail=self.detail)
 
 
 class BooklyException(Exception):
@@ -86,6 +94,16 @@ class UserNotFound(BooklyException):
 class AccountNotVerified(Exception):
     """Account not yet verified"""
     pass
+
+
+class RoomCantBookedException(MyBookingException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = 'Свободных комнат данного типа не осталось.'
+
+
+class NotFoundException(MyBookingException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Данные не найдены.'
 
 
 def create_exception_handler(
