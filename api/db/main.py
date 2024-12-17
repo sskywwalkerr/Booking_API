@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, APIRouter
 from api.auth.routes import auth_router
+from api.bookings.routes import router
 from api.db.data import init_db
 from api.hotel.routes import hotel_router
 from api.reviews.routes import review_router
@@ -24,6 +25,10 @@ app.include_router(main_api_router2)
 main_api_router3 = APIRouter()
 main_api_router3.include_router(room_routes, prefix="/room", tags=["room"])
 app.include_router(main_api_router3)
+
+main_api_router4 = APIRouter()
+main_api_router4.include_router(router, prefix="/bookings", tags=["bookings"])
+app.include_router(main_api_router4)
 
 
 @app.on_event("startup")
