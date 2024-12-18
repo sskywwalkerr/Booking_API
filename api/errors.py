@@ -96,6 +96,11 @@ class AccountNotVerified(Exception):
     pass
 
 
+class NotFoundException(MyBookingException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Данные не найдены.'
+
+
 class RoomCantBookedException(MyBookingException):
     status_code = status.HTTP_409_CONFLICT
     detail = 'Свободных комнат данного типа не осталось.'
@@ -104,6 +109,11 @@ class RoomCantBookedException(MyBookingException):
 class NotFoundException(MyBookingException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'Данные не найдены.'
+
+
+class DateFromCannotBeAfterDateTo(MyBookingException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Дата заезда не может быть позже даты выезда.'
 
 
 def create_exception_handler(

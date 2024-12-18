@@ -24,7 +24,7 @@ class HotelCreateModel(BaseModel):
     published_date: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "string",
                 "location": "string",
