@@ -12,13 +12,13 @@ class UserCreateModel(BaseModel):
     password: str = Field(min_length=6)
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "first_name": "John",
                 "last_name": "Doe",
                 "username": "johndoe",
-                "email": "johndoe123@co.com",
-                "password": "testpass123",
+                "email": "rysaev.ryss@gmail.com",
+                "password": "string",
             }
         }
 

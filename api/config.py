@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     JWT_SECRET: str
     JWT_ALGORITHM: str
     REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: str = "6379"
     MAIL_USERNAME: str
     MAIL_PASSWORD: str
     MAIL_FROM: str
