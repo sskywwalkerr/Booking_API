@@ -10,24 +10,24 @@ from api.rooms.routes import room_routes
 app = FastAPI(title="API Project")
 
 main_api_router = APIRouter()
-main_api_router.include_router(auth_router, prefix="/user", tags=["user"])
+main_api_router.include_router(auth_router, prefix="/user", tags=["пользователь"])
 app.include_router(main_api_router)
 
 main_api_router1 = APIRouter()
-main_api_router1.include_router(hotel_router, prefix="/hotel", tags=["hotel"])
+main_api_router1.include_router(hotel_router, prefix="/hotel", tags=["отель"])
 app.include_router(main_api_router1)
 
 main_api_router2 = APIRouter()
-main_api_router2.include_router(review_router, prefix="/review", tags=["review"])
+main_api_router2.include_router(review_router, prefix="/review", tags=["отзывы"])
 app.include_router(main_api_router2)
 
 
 main_api_router3 = APIRouter()
-main_api_router3.include_router(room_routes, prefix="/room", tags=["room"])
+main_api_router3.include_router(room_routes, prefix="/room", tags=["комната"])
 app.include_router(main_api_router3)
 
 main_api_router4 = APIRouter()
-main_api_router4.include_router(router, prefix="/bookings", tags=["bookings"])
+main_api_router4.include_router(router, prefix="/bookings", tags=["бронирование"])
 app.include_router(main_api_router4)
 
 

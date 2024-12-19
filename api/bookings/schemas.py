@@ -18,7 +18,7 @@ class BookingRead(BaseModel):
     user_uid: Optional[uuid.UUID]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class BookingUserRead(BaseModel):
@@ -36,4 +36,4 @@ class BookingUserRead(BaseModel):
     description: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

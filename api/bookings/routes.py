@@ -10,12 +10,9 @@ from api.models import User
 from .service import BookingDAO
 from .schemas import BookingRead, BookingUserRead
 from api.celery_tasks import send_email, send_booking_confirmation_email
-from ..errors import DateFromCannotBeAfterDateTo, NotFoundException
+from ..errors import DateFromCannotBeAfterDateTo, NotFoundException, NotFoundBooking
 
-router = APIRouter(
-    prefix='/bookings',
-    tags=['bookings']
-)
+router = APIRouter()
 
 
 @router.post('')
@@ -38,7 +35,7 @@ async def add_booking(
     )
 
     if booking is None:
-        raise HTTPException(status_code=500, detail="Не удалось создать бронирование")
+        raise NotFoundBooking
 
     booking_dict = parse_obj_as(BookingRead, booking).dict()
     send_booking_confirmation_email.delay(
@@ -47,8 +44,8 @@ async def add_booking(
     return booking_dict
 
 
-@router.get("", response_model=Union[List[BookingRead], str])
-async def get_user_bookins(user: User = Depends(get_current_user)):
+@router.get("", response_model=Union[List[BookingUserRead], str])
+async def get_user_bookings(user: User = Depends(get_current_user)):
     """Возвращает все бронирования текущего пользователя."""
     user_bookings = await BookingDAO.get_user_bookings_object(user_uid=user.uid)
 
