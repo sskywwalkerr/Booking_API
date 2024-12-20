@@ -1,9 +1,3 @@
-# from sqlmodel import SQLModel
-#
-#
-# class BaseModel(SQLModel):
-#     pass
-
 from sqlalchemy.orm import DeclarativeBase
 
 

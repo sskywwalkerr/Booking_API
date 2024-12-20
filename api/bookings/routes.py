@@ -9,8 +9,10 @@ from api.auth.dependencies import get_current_user
 from api.models import User
 from .service import BookingDAO
 from .schemas import BookingRead, BookingUserRead
-from api.celery_tasks import send_email, send_booking_confirmation_email
+
 from ..errors import DateFromCannotBeAfterDateTo, NotFoundException, NotFoundBooking
+
+from api.tasks.tasks import send_booking_confirmation_email
 
 router = APIRouter()
 
