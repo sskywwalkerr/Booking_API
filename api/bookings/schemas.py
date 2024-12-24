@@ -1,6 +1,6 @@
 import uuid
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, ConfigDict
 
@@ -14,8 +14,8 @@ class BookingRead(BaseModel):
     price: int
     total_days: int
     total_cost: int
-    room_uid: Optional[uuid.UUID]
-    user_uid: Optional[uuid.UUID]
+    room_uid: uuid.UUID
+    user_uid: uuid.UUID
 
     class Config:
         from_attributes = True
@@ -30,8 +30,8 @@ class BookingUserRead(BaseModel):
     price: int
     total_days: int
     total_cost: int
-    user_uid: Optional[uuid.UUID]
-    room_uid: Optional[uuid.UUID]
+    user_uid: uuid.UUID
+    room_uid: uuid.UUID
     name: str
     description: str
 
