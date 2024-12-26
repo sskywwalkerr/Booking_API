@@ -1,9 +1,13 @@
+import uuid
+
 from sqlalchemy import select, insert
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.errors import NotFoundException
 from api.db.data import async_session_maker
 from api.logger import logger
+from api.models import Booking
 
 
 class BaseDAO:

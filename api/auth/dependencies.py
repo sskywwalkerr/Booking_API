@@ -1,5 +1,4 @@
 from typing import Any, List
-from jose import ExpiredSignatureError, JWTError, jwt
 from fastapi import Depends, Request
 
 from fastapi.security import HTTPBearer
@@ -8,8 +7,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from api.auth.service import UserService
 from api.auth.utils import decode_token
-from api.config import Config
-from api.dao.base import BaseDAO
 from api.errors import (
     InvalidToken,
     AccessTokenRequired,

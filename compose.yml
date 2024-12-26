@@ -1,78 +1,83 @@
-version: "3.0"
-
+version: "3.8"
 services:
-  web:
-    build: .
+  db:
+    image: postgres:15
+    container_name: db
+    env_file:
+      - ./.env-docker
     volumes:
-      - .:/app
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ALGORITHM: ${JWT_ALGORITHM}
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_SERVER: ${MAIL_SERVER}
-      MAIL_PORT: ${MAIL_PORT}
-      MAIL_FROM: ${MAIL_FROM}
-      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
-      DOMAIN: ${DOMAIN}
-      REDIS_URL: ${REDIS_URL}
-
+      - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "8000:8000"
+     - 5432:5432
 
+  redis:
+    image: redis:7
+    container_name: redis
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    ports:
+     - 6379:6379
+
+  app:
+    build:
+      context: .
+    container_name: app
+    restart: always
+    volumes:
+      - app_static:/my_booking/api/static/
     depends_on:
       - db
       - redis
-
-    networks:
-      - app-network
-
-  db:
-    image: postgres:15
-
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-      POSTGRES_PASSWORD: postgres
-
+    env_file:
+      - ./.env-docker
+    command: ['/my_booking/docker/app.sh']
     ports:
-     - "5432:5432"
+      - 8000:8000
 
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-    networks:
-      - app-network
-  redis:
-    image: redis:6
-
-    ports:
-     - "6379:6379"
-
-    networks:
-     - app-network
+#  app:
+#    build:
+#      context: .
+#    container_name: app
+#    restart: always
+#    volumes:
+#      - app_static:/my_booking/api/static/
+#    depends_on:
+#      - db
+#      - redis
+#    env_file:
+#      - ./.env
+#    command: ['/my_booking/docker/app.sh']
+#    # command: sh -c "alembic upgrade head && gunicorn api.db.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
+#    ports:
+#      - "7777:8000"
 
   celery:
-    build: .
-
-    command: celery -A api.celery_tasks.c_app worker --loglevel=INFO
-
-    volumes:
-      - .:/app
-
+    build:
+      context: .
+    container_name: celery
+    command: ['/my_booking/docker/celery.sh', 'celery']
+    # command: celery -A api.celery_tasks.c_app worker --loglevel=INFO
     depends_on:
       - redis
+    env_file:
+      - ./.env
 
-    environment:
-      REDIS_URL: ${REDIS_URL}
-
-    networks:
-      - app-network
+  flower:
+    build:
+      context: .
+    container_name: flower
+    command: ['/my_booking/docker/celery.sh', 'flower']
+    # command: celery -A api.tasks.celery:celery flower
+    depends_on:
+      - redis
+      - celery
+    env_file:
+      - ./.env
+    ports:
+      - 5555:5555
 
 volumes:
-  db-data:
-
-networks:
-  app-network:
-    driver: bridge
+  postgres_data:
+  app_static:
