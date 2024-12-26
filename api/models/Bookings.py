@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, ForeignKey, Integer, Computed, Date
+from sqlalchemy import Column, ForeignKey, Integer, Computed, Date, Boolean
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from uuid import uuid4
@@ -31,9 +31,8 @@ class Booking(Base):
 
     room_uid = Column(PGUUID(as_uuid=True), ForeignKey("room.uid"))
     user_uid = Column(PGUUID(as_uuid=True), ForeignKey("users.uid"))
+    is_confirmed = Column(Boolean, default=False)
 
-    # user = relationship("User", back_populates="bookings")
-    # room = relationship("Room", back_populates="booking")
     user: Mapped["User"] = relationship(back_populates="bookings")
     room: Mapped["Room"] = relationship(back_populates="booking")
 
