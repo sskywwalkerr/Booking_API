@@ -1,6 +1,5 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from fastapi.requests import Request
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 import time

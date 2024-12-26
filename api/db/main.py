@@ -1,11 +1,16 @@
-import uvicorn
+# import uvicorn
 from fastapi import FastAPI, APIRouter
 from api.auth.routes import auth_router
 from api.bookings.routes import router
+# from api.config import Config
 from api.db.data import init_db
 from api.hotel.routes import hotel_router
 from api.reviews.routes import review_router
 from api.rooms.routes import room_routes
+
+# from redis import asyncio as aioredis
+# from fastapi_cache import FastAPICache
+# from fastapi_cache.backends.redis import RedisBackend
 
 app = FastAPI(title="API Project")
 
@@ -35,5 +40,14 @@ app.include_router(main_api_router4)
 async def on_startup() -> None:
     await init_db()
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# @app.on_event('startup')
+# def startup():
+#     redis = aioredis.from_url(
+#         f'redis://{Config.REDIS_HOST}:{Config.REDIS_PORT}',
+#         encoding='utf8',
+#         decode_responses=True
+#     )
+#     FastAPICache.init(RedisBackend(redis), prefix="cache")
+
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8000)

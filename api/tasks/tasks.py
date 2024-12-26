@@ -23,3 +23,4 @@ def send_booking_confirmation_email(
         print("Email sent successfully")
     except Exception as e:
         print(f"Error sending email: {e}")
+        raise
