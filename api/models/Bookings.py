@@ -1,6 +1,8 @@
+import enum
+
 from datetime import datetime
 
-from sqlalchemy import Column, ForeignKey, Integer, Computed, Date, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, Computed, Date, Boolean, Enum
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from uuid import uuid4
@@ -9,6 +11,12 @@ from api.database.db import Base
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from api.models import User, Room
+
+
+class BookingStatus(str, enum.Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
 
 
 class Booking(Base):
@@ -31,7 +39,9 @@ class Booking(Base):
 
     room_uid = Column(PGUUID(as_uuid=True), ForeignKey("room.uid"))
     user_uid = Column(PGUUID(as_uuid=True), ForeignKey("users.uid"))
-    is_confirmed = Column(Boolean, default=False)
+
+    # is_confirmed = Column(Boolean, default=False)
+    status = Column(Enum(BookingStatus), default=BookingStatus.PENDING)
 
     user: Mapped["User"] = relationship(back_populates="bookings")
     room: Mapped["Room"] = relationship(back_populates="booking")
