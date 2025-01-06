@@ -36,11 +36,14 @@ class BookingUserRead(BaseModel):
     room_uid: uuid.UUID
     name: str
     description: str
-    status: BookingStatus
 
     class Config:
         from_attributes = True
 
 
 class BookingConfirm(BaseModel):
-    uid: str
+    uid: uuid.UUID
+    confirmed: bool
+
+    class Config:
+        from_attributes = True

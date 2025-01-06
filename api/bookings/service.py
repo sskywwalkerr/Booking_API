@@ -2,7 +2,10 @@ import uuid
 from datetime import date
 
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import and_, func, insert, or_, select
+from sqlalchemy import and_, func, insert, or_, select, update
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from api.bookings.schemas import BookingConfirm
 
 from api.dao.base import BaseDAO
 from api.db.data import async_session_maker
@@ -121,3 +124,32 @@ class BookingDAO(BaseDAO):
 
             user_bookings = await session.execute(get_user_bookings)
             return user_bookings.mappings().all()
+
+
+# async def confirm_booking_service(self, db: AsyncSession, booking_uid: uuid.UUID):
+#     result = await db.execute(select(Booking).filter(Booking.uid == booking_uid))
+#     booking = result.scalars().first()
+#
+#     if not booking:
+#         raise BookingNotFound  # Бронирование не найдено
+#
+#     booking.is_confirmed = True  # Обновляем статус подтверждения
+#     await db.commit()  # Сохраняем изменения в базе данных
+#     await db.refresh(booking)  # Обновляем объект booking
+#     return booking
+
+async def confirmed_booking(booking_data: BookingConfirm, db: AsyncSession):
+    async with db.begin():
+        # Найти бронь по uid
+        result = await db.execute(select(Booking).where(Booking.uid == booking_data.uid))
+        booking = result.scalar_one_or_none()
+
+    if booking is None:
+        raise ValueError("Бронирование не найдено")
+
+    # Обновление поля confirmed
+    await db.execute(update(Booking).where(Booking.uid == booking.uid).values(is_confirmed=booking_data.confirmed))
+    await db.commit()
+
+    return booking
+

@@ -116,6 +116,11 @@ class NotFoundBooking(MyBookingException):
     detail = 'Дата заезда не может быть позже даты выезда.'
 
 
+class BookingNotFound(NotFoundException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Бронирование не найдено'
+
+
 def create_exception_handler(
     status_code: int, initial_detail: Any
 ) -> Callable[[Request, Exception], JSONResponse]:

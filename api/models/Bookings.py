@@ -40,8 +40,8 @@ class Booking(Base):
     room_uid = Column(PGUUID(as_uuid=True), ForeignKey("room.uid"))
     user_uid = Column(PGUUID(as_uuid=True), ForeignKey("users.uid"))
 
-    # is_confirmed = Column(Boolean, default=False)
-    status = Column(Enum(BookingStatus), default=BookingStatus.PENDING)
+    is_confirmed = Column(Boolean, default=False)
+    # status = Column(Enum(BookingStatus), default=BookingStatus.PENDING)
 
     user: Mapped["User"] = relationship(back_populates="bookings")
     room: Mapped["Room"] = relationship(back_populates="booking")

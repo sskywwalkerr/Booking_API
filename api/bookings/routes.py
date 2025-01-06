@@ -5,10 +5,14 @@ from pydantic import parse_obj_as
 
 from typing import List, Union
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.auth.dependencies import get_current_user
 from api.models import User
-from .service import BookingDAO
-from .schemas import BookingRead, BookingUserRead
+
+from .schemas import BookingRead, BookingUserRead, BookingConfirm
+from .service import BookingDAO, confirmed_booking
+from api.db.data import get_session
 
 from ..errors import DateFromCannotBeAfterDateTo, NotFoundException, NotFoundBooking
 
@@ -74,3 +78,24 @@ async def delete_booking(
     return await BookingDAO.delete_object(
         uid=booking_uid, user_uid=user.uid
     )
+
+
+# @router.get("/confirm_booking/{booking_uid}", response_model=BookingUserRead)
+# async def confirm_booking(
+#         booking_uid: uuid.UUID,
+#         db: AsyncSession = Depends(async_session_maker)
+# ):
+#     booking = await confirm_booking_service(db, booking_uid)
+#     if not booking:
+#         raise BookingNotFound
+#     return booking
+
+@router.post("/confirm_booking")
+async def confirm_booking_route(
+    booking_data: BookingConfirm, db: AsyncSession = Depends(get_session)
+):
+    try:
+        booking = await confirmed_booking(booking_data, db)
+        return {"message": "Бронирование подтверждено", "booking": booking}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
