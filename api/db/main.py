@@ -1,9 +1,14 @@
 # import uvicorn
 from fastapi import FastAPI, APIRouter
+from sqladmin import Admin
+
+from api.admin.auth import authentication_backend
+from api.admin.main import UserAdmin, BookingAdmin, RoomAdmin, HotelAdmin
+
 from api.auth.routes import auth_router
 from api.bookings.routes import router
 # from api.config import Config
-from api.db.data import init_db
+from api.db.data import init_db, async_engine
 from api.hotel.routes import hotel_router
 from api.reviews.routes import review_router
 from api.rooms.routes import room_routes
@@ -35,6 +40,12 @@ main_api_router4 = APIRouter()
 main_api_router4.include_router(router, prefix="/bookings", tags=["бронирование"])
 app.include_router(main_api_router4)
 
+# подключение админки
+admin = Admin(app, async_engine, authentication_backend=authentication_backend)
+admin.add_view(UserAdmin)
+admin.add_view(HotelAdmin)
+admin.add_view(BookingAdmin)
+admin.add_view(RoomAdmin)
 
 @app.on_event("startup")
 async def on_startup() -> None:

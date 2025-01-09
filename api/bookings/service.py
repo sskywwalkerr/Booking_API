@@ -1,6 +1,9 @@
 import uuid
 from datetime import date
 
+from celery.worker.control import conf
+from fastapi import BackgroundTasks
+from fastapi_mail import FastMail
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_, func, insert, or_, select, update
 
@@ -11,8 +14,9 @@ from api.dao.base import BaseDAO
 from api.db.data import async_session_maker
 from api.errors import RoomCantBookedException
 from api.logger import logger
-from api.models.Bookings import Booking
+from api.models.Bookings import Booking, BookingStatus
 from api.models.Room import Room
+from api.tasks.email_templates import create_booking_confirmation_template
 
 
 class BookingDAO(BaseDAO):
@@ -126,18 +130,6 @@ class BookingDAO(BaseDAO):
             return user_bookings.mappings().all()
 
 
-# async def confirm_booking_service(self, db: AsyncSession, booking_uid: uuid.UUID):
-#     result = await db.execute(select(Booking).filter(Booking.uid == booking_uid))
-#     booking = result.scalars().first()
-#
-#     if not booking:
-#         raise BookingNotFound  # Бронирование не найдено
-#
-#     booking.is_confirmed = True  # Обновляем статус подтверждения
-#     await db.commit()  # Сохраняем изменения в базе данных
-#     await db.refresh(booking)  # Обновляем объект booking
-#     return booking
-
 async def confirmed_booking(booking_data: BookingConfirm, db: AsyncSession):
     async with db.begin():
         # Найти бронь по uid
@@ -153,3 +145,23 @@ async def confirmed_booking(booking_data: BookingConfirm, db: AsyncSession):
 
     return booking
 
+
+# async def confirmed_booking(booking_data: BookingConfirm, db: AsyncSession):
+#     async with db.begin():
+#          # Найти бронь по uid
+#
+#          result = await db.execute(select(Booking).where(Booking.uid == booking_data.uid))
+#          booking = result.scalar_one_or_none()
+#
+#     if booking is None:
+#          raise ValueError("Бронирование не найдено")
+#
+#     # Обновление статуса на CONFIRMED
+#
+#     await db.execute(update(Booking).where(Booking.uid == booking.uid).values(status=BookingStatus.CONFIRMED))
+#     await db.commit()
+#
+# async def send_booking_confirmation_email(booking: Booking, email_to: str, background_tasks):
+#     message = create_booking_confirmation_template(booking.dict(), email_to)
+#     fm = FastMail(conf)
+#     background_tasks.add_task(fm.send_message, message)

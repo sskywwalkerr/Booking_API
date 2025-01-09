@@ -1,13 +1,12 @@
-import uuid
-
 from sqlalchemy import select, insert
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.ext.asyncio import AsyncSession
+
+from sqlalchemy.engine import Row
 
 from api.errors import NotFoundException
 from api.db.data import async_session_maker
 from api.logger import logger
-from api.models import Booking
+
 
 
 class BaseDAO:
@@ -30,6 +29,16 @@ class BaseDAO:
         async with async_session_maker() as session:
             query = select(cls.model.__table__.columns).filter_by(**kwargs)
             result = await session.execute(query)
+            return result.mappings().one_or_none()
+
+    @classmethod
+    async def get_object_or_none(cls, **filters) -> Row | None:
+        """Находит объект по фильтру или возвращает None"""
+
+        async with async_session_maker() as session:
+            query = select(cls.model.__table__.columns).filter_by(**filters)
+            result = await session.execute(query)
+
             return result.mappings().one_or_none()
 
     @classmethod
