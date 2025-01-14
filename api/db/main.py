@@ -3,7 +3,9 @@ from fastapi import FastAPI, APIRouter
 from sqladmin import Admin
 
 from api.admin.auth import authentication_backend
+
 from api.admin.main import UserAdmin, BookingAdmin, RoomAdmin, HotelAdmin
+from api.admin.views import UsersAdmin, HotelsAdmin, RoomsAdmin, BookingsAdmin
 
 from api.auth.routes import auth_router
 from api.bookings.routes import router
@@ -42,10 +44,16 @@ app.include_router(main_api_router4)
 
 # подключение админки
 admin = Admin(app, async_engine, authentication_backend=authentication_backend)
-admin.add_view(UserAdmin)
-admin.add_view(HotelAdmin)
-admin.add_view(BookingAdmin)
-admin.add_view(RoomAdmin)
+# admin.add_view(UserAdmin)
+# admin.add_view(HotelAdmin)
+# admin.add_view(BookingAdmin)
+# admin.add_view(RoomAdmin)
+
+admin.add_view(UsersAdmin)
+admin.add_view(HotelsAdmin)
+admin.add_view(RoomsAdmin)
+admin.add_view(BookingsAdmin)
+
 
 @app.on_event("startup")
 async def on_startup() -> None:

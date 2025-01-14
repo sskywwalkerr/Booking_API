@@ -121,6 +121,11 @@ class BookingNotFound(NotFoundException):
     detail = 'Бронирование не найдено'
 
 
+class IncorrectEmailOrPasswordException(MyBookingException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = "Неверная почта или пароль"
+
+
 def create_exception_handler(
     status_code: int, initial_detail: Any
 ) -> Callable[[Request, Exception], JSONResponse]:
