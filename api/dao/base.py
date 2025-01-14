@@ -8,7 +8,6 @@ from api.db.data import async_session_maker
 from api.logger import logger
 
 
-
 class BaseDAO:
     """Класс для работы с объектами БД"""
 
