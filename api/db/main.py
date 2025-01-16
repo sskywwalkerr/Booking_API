@@ -14,7 +14,7 @@ from api.db.data import init_db, async_engine
 from api.hotel.routes import hotel_router
 from api.reviews.routes import review_router
 from api.rooms.routes import room_routes
-
+from prometheus.routes import router_prom
 # from redis import asyncio as aioredis
 # from fastapi_cache import FastAPICache
 # from fastapi_cache.backends.redis import RedisBackend
@@ -41,6 +41,10 @@ app.include_router(main_api_router3)
 main_api_router4 = APIRouter()
 main_api_router4.include_router(router, prefix="/bookings", tags=["бронирование"])
 app.include_router(main_api_router4)
+
+main_api_router5 = APIRouter()
+main_api_router5.include_router(router_prom, prefix="/Prometheus", tags=["Prometheus"])
+app.include_router(main_api_router5)
 
 # подключение админки
 admin = Admin(app, async_engine, authentication_backend=authentication_backend)
