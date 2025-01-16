@@ -84,3 +84,4 @@ python-jose==3.3.0
 python-json-logger==2.0.7
 
 prometheus-fastapi-instrumentator==6.0.0
+fastapi_versioning==0.10.0
