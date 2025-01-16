@@ -126,6 +126,30 @@ class IncorrectEmailOrPasswordException(MyBookingException):
     detail = "Неверная почта или пароль"
 
 
+class IncorrectTokenFormatException(MyBookingException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = "Неверный формат токена"
+
+
+class TokenAbsentException(MyBookingException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = "Токен отсутствует"
+
+
+class TokenExpiredException(MyBookingException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = "Срок действия токена истек"
+
+
+class UserDoesNotExistException(MyBookingException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = 'Пользователь не найден'
+
+
+class UserIsNotPresentException(MyBookingException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+
+
 def create_exception_handler(
     status_code: int, initial_detail: Any
 ) -> Callable[[Request, Exception], JSONResponse]:
