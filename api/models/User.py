@@ -28,9 +28,6 @@ class User(Base):
     created_at = Column(DateTime, default=func.now())
     update_at = Column(DateTime, default=func.now())
 
-    # bookings = relationship("Booking", back_populates="user")
-    # hotels = relationship("Hotel", back_populates="user")
-    # reviews = relationship("Review", back_populates="user")
     bookings: Mapped[List["Booking"]] = relationship(back_populates="user")
     hotels: Mapped[List["Hotel"]] = relationship(back_populates="user")
     reviews: Mapped[List["Review"]] = relationship(back_populates="user")

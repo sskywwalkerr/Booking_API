@@ -47,3 +47,10 @@ class BookingConfirm(BaseModel):
 
     class Config:
         from_attributes = True
+
+# class BookingConfirm(BaseModel):
+#     uid: uuid.UUID
+#     status: str
+#
+#     class Config:
+#         from_attributes = True
