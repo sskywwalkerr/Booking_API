@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import List
 from uuid import UUID
 from datetime import datetime
@@ -51,3 +51,10 @@ class PasswordResetRequestModel(BaseModel):
 class PasswordResetConfirmModel(BaseModel):
     new_password: str
     confirm_new_password: str
+
+
+class RegisterUserSchema(BaseModel):
+    """Схема для регистрации пользователя"""
+
+    email: EmailStr
+    password: str
