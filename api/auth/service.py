@@ -1,10 +1,17 @@
+from pydantic import EmailStr
+from sqlalchemy import RowMapping
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from api.models.User import User
 
 from .schemas import UserCreateModel
-from .utils import generate_passwd_hash
+from .utils import generate_passwd_hash, verify_password
+from api.dao.base_dao import BasedDAO
+
+from api.dao.base import BaseDAO
+from api.errors import IncorrectEmailOrPasswordException
+from ..dao.users_dao import UsersDAO
 
 
 class UserService:
@@ -22,19 +29,6 @@ class UserService:
 
         return True if user is not None else False
 
-    # async def create_user(self, user_data: UserCreateModel, session: AsyncSession):
-    #     user_data_dict = user_data.model_dump()
-    #
-    #     new_user = User(**user_data_dict)
-    #
-    #     new_user.password_hash = generate_passwd_hash(user_data_dict["password"])
-    #     new_user.role = "user"
-    #
-    #     session.add(new_user)
-    #
-    #     await session.commit()
-    #
-    #     return new_user
     async def create_user(self, user_data: UserCreateModel, session: AsyncSession):
         user_data_dict = user_data.dict(exclude={'password'})
 
@@ -57,3 +51,19 @@ class UserService:
         await session.commit()
 
         return user
+
+
+async def authenticate_user(email: EmailStr, password: str) -> RowMapping:
+    """Если логин/пароль верны, возвращает пользователя."""
+    user: RowMapping | None = await UsersDAO.find_one_or_none(email=email)
+    if not user:
+        raise IncorrectEmailOrPasswordException
+    if not verify_password(password, user.password_hash):
+        raise IncorrectEmailOrPasswordException
+    return user
+
+
+class AdminService(BaseDAO):
+    """Класс для работы с пользователями в БД"""
+
+    model = User
