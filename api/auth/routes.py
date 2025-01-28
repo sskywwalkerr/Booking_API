@@ -51,16 +51,16 @@ REFRESH_TOKEN_EXPIRY = 2
 # Endpoints
 
 
-@auth_router.post("/send_mail")
-async def send_mail(emails: EmailModel):
-    emails = emails.addresses
-
-    html = "<h1>Welcome to the app</h1>"
-    subject = "Welcome to our app"
-
-    send_email(emails, subject, html)
-
-    return {"message": "Email sent successfully"}
+# @auth_router.post("/send_mail")
+# async def send_mail(emails: EmailModel):
+#     emails = emails.addresses
+#
+#     html = "<h1>Welcome to the app</h1>"
+#     subject = "Welcome to our app"
+#
+#     send_email(emails, subject, html)
+#
+#     return {"message": "Email sent successfully"}
 
 
 @auth_router.post("/signup", status_code=status.HTTP_201_CREATED)

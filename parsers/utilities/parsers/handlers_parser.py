@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, FastAPI
 from pydantic import BaseModel
 
 
-from utilities.parsers.product_parser import get_data, get_result
+from parsers.utilities.parsers.product_parser import get_data, get_result
 # from utilities.redis_tools.tools import RedisTools
 
 logger = getLogger(__name__)

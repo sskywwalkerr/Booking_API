@@ -80,16 +80,6 @@ async def delete_booking(
     )
 
 
-# @router.get("/confirm_booking/{booking_uid}", response_model=BookingUserRead)
-# async def confirm_booking(
-#         booking_uid: uuid.UUID,
-#         db: AsyncSession = Depends(async_session_maker)
-# ):
-#     booking = await confirm_booking_service(db, booking_uid)
-#     if not booking:
-#         raise BookingNotFound
-#     return booking
-
 @router.post("/confirm_booking")
 async def confirm_booking_route(
     booking_data: BookingConfirm, db: AsyncSession = Depends(get_session)

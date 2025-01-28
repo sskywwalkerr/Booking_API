@@ -4,8 +4,6 @@ from datetime import date
 
 from pydantic import BaseModel
 
-from api.models.Bookings import BookingStatus
-
 
 class BookingRead(BaseModel):
     """Модель отображения бронирования."""
@@ -47,10 +45,3 @@ class BookingConfirm(BaseModel):
 
     class Config:
         from_attributes = True
-
-# class BookingConfirm(BaseModel):
-#     uid: uuid.UUID
-#     status: str
-#
-#     class Config:
-#         from_attributes = True
