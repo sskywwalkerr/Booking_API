@@ -10,7 +10,7 @@ from api.models.Review import Review
 from api.hotel.service import HotelService
 
 from .schemas import ReviewCreateModel
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+
 import logging
 logger = logging.getLogger(__name__)
 

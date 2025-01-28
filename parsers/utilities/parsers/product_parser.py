@@ -3,7 +3,7 @@ import requests
 import json
 import os
 import math
-from utilities.parsers.config import cookies, headers
+from parsers.utilities.parsers.config import cookies, headers
 
 
 def get_data(url=None):
