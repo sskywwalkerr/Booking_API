@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     JWT_SECRET: str
     JWT_ALGORITHM: str
 
+    TRAVEL_API_KEY: str
+    TRAVEL_API_SECRET: str
+
     REDIS_HOST: str
     REDIS_PORT: int
 
@@ -30,6 +33,3 @@ Config = Settings()
 broker_url = f"redis://{Config.REDIS_HOST}:{Config.REDIS_PORT}/0"
 result_backend = f"redis://{Config.REDIS_HOST}:{Config.REDIS_PORT}/0"
 broker_connection_retry_on_startup = True
-# broker_url = Config.REDIS_URL
-# result_backend = Config.REDIS_URL
-# broker_connection_retry_on_startup = True
