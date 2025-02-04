@@ -2,6 +2,7 @@
 from fastapi import FastAPI, APIRouter
 from sqladmin import Admin
 
+from TravelAPI.routes.amadeus_routes import router_search
 from api.admin.auth import authentication_backend
 
 from api.admin.main import UserAdmin, BookingAdmin, RoomAdmin, HotelAdmin
@@ -43,6 +44,10 @@ app.include_router(main_api_router4)
 main_api_router5 = APIRouter()
 main_api_router5.include_router(router_prom, prefix="/Prometheus", tags=["Prometheus"])
 app.include_router(main_api_router5)
+
+main_api_router6 = APIRouter()
+main_api_router6.include_router(router_search, prefix="/search-hotels", tags=["search-hotels"])
+app.include_router(main_api_router6)
 
 # подключение админки
 admin = Admin(app, async_engine, authentication_backend=authentication_backend)
