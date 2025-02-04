@@ -1,5 +1,6 @@
 # Client для внешнего API
 import logging
+from datetime import date
 
 import httpx
 import os
@@ -8,7 +9,7 @@ load_dotenv()
 
 
 class AmadeusApiClient:
-    BASE_URL = "https://test.api.amadeus.com/v2" # Тестовый юрл для api
+    BASE_URL = "https://test.api.amadeus.com/v1"
 
     def __init__(self):
         self.client_id = os.getenv('TRAVEL_API_KEY')
@@ -27,20 +28,24 @@ class AmadeusApiClient:
             if not self.access_token:
                 raise ValueError("Failed to obtain access token")
 
-    async def search_hotels(self, city: str, check_in: str, check_out: str, adults: int):
+    async def search_hotels(self, city: str):
         if not self.access_token:
             await self.authenticate()
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
         params = {
             "cityCode": city,
-            "checkInDate": check_in,
-            "checkOutDate": check_out,
-            "adults": adults,
+            # "checkInDate": check_in,
+            # "checkOutDate": check_out,
+            # "adults": adults,
         }
+        url = f"{self.BASE_URL}/reference-data/locations/hotels/by-city"
+        logging.debug(f"Request URL: {url}")
         logging.debug(f"Requesting hotels with params: {params}")
 
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{self.BASE_URL}/shopping/hotel-offers", headers=headers, params=params)
+            response = await client.get(url, headers=headers, params=params)
+            logging.debug(f"Response status: {response.status_code}")
+            logging.debug(f"Response content: {response.text}")
             response.raise_for_status()
             return response.json()
