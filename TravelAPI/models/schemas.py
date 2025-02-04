@@ -12,9 +12,9 @@ class HotelTravel(BaseModel):
 
 class SearchRequest(BaseModel):
     city: str
-    check_in: str
-    check_out: str
-    adults: int
+    # check_in: str
+    # check_out: str
+    # adults: int
 
 
 class BookingRequest(BaseModel):
