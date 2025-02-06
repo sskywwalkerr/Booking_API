@@ -24,3 +24,7 @@ class BookingRequest(BaseModel):
     user_uid: uuid.UUID
     # check_in: date
     # check_out: date
+
+
+class GetSentiments(BaseModel):
+    hotel_ids: str
