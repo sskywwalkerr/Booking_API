@@ -28,3 +28,10 @@ class BookingRequest(BaseModel):
 
 class GetSentiments(BaseModel):
     hotel_ids: str
+
+
+class GetPrices(BaseModel):
+    hotel_ids: str
+    adults: int = 1
+    checkInDate: str
+    roomQuantity: int = 1
