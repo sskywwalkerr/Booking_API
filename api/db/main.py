@@ -15,7 +15,6 @@ from api.db.data import init_db, async_engine
 from api.hotel.routes import hotel_router
 from api.reviews.routes import review_router
 from api.rooms.routes import room_routes
-from prometheus.routes import router_prom
 
 
 app = FastAPI(title="API Project")
@@ -40,10 +39,6 @@ app.include_router(main_api_router3)
 main_api_router4 = APIRouter()
 main_api_router4.include_router(router, prefix="/bookings", tags=["бронирование"])
 app.include_router(main_api_router4)
-
-main_api_router5 = APIRouter()
-main_api_router5.include_router(router_prom, prefix="/Prometheus", tags=["Prometheus"])
-app.include_router(main_api_router5)
 
 main_api_router6 = APIRouter()
 main_api_router6.include_router(router_search, prefix="/search-hotels", tags=["search-hotels"])
