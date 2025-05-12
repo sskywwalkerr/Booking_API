@@ -1,25 +1,5 @@
 version: "3.8"
 services:
-  db:
-    image: postgres:15
-    container_name: db
-    env_file:
-      - ./.env-docker
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    ports:
-     - 5432:5432
-
-  redis:
-    image: redis:7
-    container_name: redis
-    depends_on:
-      - db
-    env_file:
-      - ./.env
-    ports:
-     - 6379:6379
-
   app:
     build:
       context: .
@@ -32,9 +12,35 @@ services:
       - redis
     env_file:
       - ./.env-docker
-    command: ['/my_booking/docker/app.sh']
+    command: [ '/my_booking/docker/app.sh' ]
     ports:
       - 8000:8000
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15
+    container_name: db
+    env_file:
+      - ./.env-docker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+     - 5432:5432
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7
+    container_name: redis
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    ports:
+     - 6379:6379
+    networks:
+      - app-network
 
   celery:
     build:
@@ -46,6 +52,8 @@ services:
       - redis
     env_file:
       - ./.env
+    networks:
+      - app-network
 
   flower:
     build:
@@ -60,6 +68,8 @@ services:
       - ./.env
     ports:
       - 5555:5555
+    networks:
+      - app-network
 
 #  prometheus:
 #    image: prom/prometheus:v2.43.0
@@ -83,5 +93,9 @@ services:
 volumes:
   postgres_data:
   app_static:
+
+networks:
+  app-network:
+    driver: bridge
 #  grafana_data:
 #  prometheus_data:
