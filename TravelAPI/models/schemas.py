@@ -1,50 +1,69 @@
-from pydantic import BaseModel
-import uuid
-from typing import Optional
-
-class HotelTravel(BaseModel):
-    uid: uuid.UUID
-    name: str
-    location: str
-    price: str
-    description: str
+from enum import Enum
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 
-class SearchRequest(BaseModel):
-    city: str
+class RadiusUnit(str, Enum):
+    KM = 'KM'
+    MILE = 'MILE'
 
 
-class BookingRequest(BaseModel):
-    hotel_uid: uuid.UUID
-    user_uid: uuid.UUID
+class HotelSource(str, Enum):
+    BEDBANK = 'BEDBANK'
+    DIRECTCHAIN = 'DIRECTCHAIN'
+    ALL = 'ALL'
 
 
-class GetSentiments(BaseModel):
-    hotel_ids: str
+class Amenity(str, Enum):
+    SWIMMING_POOL = 'SWIMMING_POOL'
+    SPA = 'SPA'
+    FITNESS_CENTER = 'FITNESS_CENTER'
+    AIR_CONDITIONING = 'AIR_CONDITIONING'
+    RESTAURANT = 'RESTAURANT'
+    PARKING = 'PARKING'
+    PETS_ALLOWED = 'PETS_ALLOWED'
+    AIRPORT_SHUTTLE = 'AIRPORT_SHUTTLE'
+    BUSINESS_CENTER = 'BUSINESS_CENTER'
+    DISABLED_FACILITIES = 'DISABLED_FACILITIES'
+    WIFI = 'WIFI'
+    MEETING_ROOMS = 'MEETING_ROOMS'
+    NO_KID_ALLOWED = 'NO_KID_ALLOWED'
+    TENNIS = 'TENNIS'
+    GOLF = 'GOLF'
+    KITCHEN = 'KITCHEN'
+    ANIMAL_WATCHING = 'ANIMAL_WATCHING'
+    BABY_SITTING = 'BABY-SITTING'
+    BEACH = 'BEACH'
+    CASINO = 'CASINO'
+    JACUZZI = 'JACUZZI'
+    SAUNA = 'SAUNA'
+    SOLARIUM = 'SOLARIUM'
+    MASSAGE = 'MASSAGE'
+    VALET_PARKING = 'VALET_PARKING'
+    BAR_OR_LOUNGE = 'BAR or LOUNGE'
+    KIDS_WELCOME = 'KIDS_WELCOME'
+    NO_PORN_FILMS = 'NO_PORN_FILMS'
+    MINIBAR = 'MINIBAR'
+    TELEVISION = 'TELEVISION'
+    WIFI_IN_ROOM = 'WI-FI_IN_ROOM'
+    ROOM_SERVICE = 'ROOM_SERVICE'
+    GUARDED_PARKG = 'GUARDED_PARKG'
+    SERV_SPEC_MENU = 'SERV_SPEC_MENU'
 
 
-class GetPrices(BaseModel):
-    hotel_ids: str
-    adults: int = 1
-    checkInDate: str
-    checkOutDate: str
-    roomQuantity: int = 1
-    currency: str = "USD"
+class Rating(str, Enum):
+    ONE = '1'
+    TWO = '2'
+    THREE = '3'
+    FOUR = '4'
+    FIVE = '5'
+
 
 class HotelSearchRequest(BaseModel):
-    city_code: str
-    radius: Optional[int] = None  # в метрах
-    chain_codes: Optional[str] = None  # коды сетей отелей через запятую
-    amenities: Optional[str] = None  # удобства через запятую
-    ratings: Optional[str] = None  # рейтинги через запятую (1-5)
-    limit: int = 10
-    offset: int = 0
-
-class HotelOffersRequest(BaseModel):
-    hotel_ids: str  # ID отелей через запятую
-    check_in_date: str  # формат YYYY-MM-DD
-    check_out_date: str  # формат YYYY-MM-DD
-    adults: int = 1
-    room_quantity: int = 1
-    currency: str = "USD"
-    language: str = "en-US"
+    city_code: str = Field(..., description="Destination city code (IATA)")
+    radius: Optional[int] = Field(5, description="Search radius (default: 5)")
+    radius_unit: Optional[RadiusUnit] = Field(RadiusUnit.KM, description="Radius unit (KM/MILE)")
+    chain_codes: Optional[List[str]] = Field(None, description="Hotel chain codes (2-letter codes)")
+    amenities: Optional[List[Amenity]] = Field(None, description="Hotel amenities filter")
+    ratings: Optional[List[Rating]] = Field(None, description="Hotel star ratings")
+    hotel_source: Optional[HotelSource] = Field(HotelSource.ALL, description="Hotel data source")
