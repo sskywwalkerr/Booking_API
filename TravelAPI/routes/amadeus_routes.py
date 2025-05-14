@@ -26,20 +26,3 @@ async def search_hotels(request: HotelSearchRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-# @router_search.post("/hotel-offers/")
-# async def get_hotel_offers(request: HotelOffersRequest):
-#     try:
-#         return await amadeus_client.get_hotel_offers(
-#             hotel_ids=request.hotel_ids,
-#             check_in_date=request.check_in_date,
-#             check_out_date=request.check_out_date,
-#             adults=request.adults,
-#             room_quantity=request.room_quantity,
-#             currency=request.currency,
-#             language=request.language
-#         )
-#     except httpx.HTTPStatusError as e:
-#         raise HTTPException(status_code=e.response.status_code, detail=str(e))
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
