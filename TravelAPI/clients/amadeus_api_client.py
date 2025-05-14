@@ -77,42 +77,12 @@ class AmadeusApiClient:
             "hotelSource": hotel_source,
         }
         if chain_codes:
-            params["chainCodes"] = chain_codes  # как множественные параметры
+            params["chainCodes"] = chain_codes  # лучше передать пустой список, что бы показать все отели
         if amenities:
             params["amenities"] = ','.join(amenities)  # как строка с запятыми
         if ratings:
             params["ratings"] = ','.join(ratings)  # как строка с запятыми
 
-            # Удаляем пустые параметры
         params = {k: v for k, v in params.items() if v is not None}
 
         return await self.make_request("GET", self.HOTELS_BY_CITY_URL, headers, params)
-
-    # async def get_hotel_offers(
-    #         self,
-    #         hotel_ids: str,
-    #         check_in_date: str,
-    #         check_out_date: str,
-    #         adults: int = 1,
-    #         room_quantity: int = 1,
-    #         currency: str = "USD",
-    #         language: str = "en-US"
-    # ) -> Dict[str, Any]:
-    #     if not self.access_token:
-    #         await self.authenticate()
-    #
-    #     headers = {
-    #         "Authorization": f"Bearer {self.access_token}",
-    #         "Content-Type": "application/json"
-    #     }
-    #     payload = {
-    #         "hotelIds": hotel_ids,
-    #         "checkInDate": check_in_date,
-    #         "checkOutDate": check_out_date,
-    #         "adults": adults,
-    #         "roomQuantity": room_quantity,
-    #         "currency": currency,
-    #         "language": language
-    #     }
-    #
-    #     return await self.make_request("POST", self.HOTEL_OFFERS_URL, headers, json=payload)
