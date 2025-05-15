@@ -3,6 +3,7 @@ from typing import Dict, Any, Optional, List
 import httpx
 import os
 from dotenv import load_dotenv
+from pydantic import Field
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ class AmadeusApiClient:
     BASE_URL_V3 = "https://test.api.amadeus.com/v3"
     TOKEN_URL = f"{BASE_URL_V1}/security/oauth2/token"
     HOTELS_BY_CITY_URL = f"{BASE_URL_V1}/reference-data/locations/hotels/by-city"
-    HOTEL_OFFERS_URL = f"{BASE_URL_V2}/shopping/hotel-offers"
+    HOTEL_OFFERS_URL = f"{BASE_URL_V3}/shopping/hotel-offers"
 
     def __init__(self):
         self.client_id = os.getenv('TRAVEL_API_KEY')
@@ -79,10 +80,78 @@ class AmadeusApiClient:
         if chain_codes:
             params["chainCodes"] = chain_codes  # лучше передать пустой список, что бы показать все отели
         if amenities:
-            params["amenities"] = ','.join(amenities)  # как строка с запятыми
+            params["amenities"] = ','.join(amenities)
         if ratings:
-            params["ratings"] = ','.join(ratings)  # как строка с запятыми
+            params["ratings"] = ','.join(ratings)
 
         params = {k: v for k, v in params.items() if v is not None}
 
         return await self.make_request("GET", self.HOTELS_BY_CITY_URL, headers, params)
+
+    async def get_hotel_offers(
+            self,
+            hotel_ids: str,
+            check_in_date: str,
+            check_out_date: str,
+            adults: int = 1,
+            room_quantity: int = 1,
+
+    ) -> Dict[str, Any]:
+        if not self.access_token:
+            await self.authenticate()
+
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+
+        params = {
+            "hotelIds": hotel_ids.strip(),
+            "checkInDate": check_in_date.strip(),
+            "checkOutDate": check_out_date.strip(),
+            "adults": adults,
+            "roomQuantity": room_quantity,
+        }
+
+        params = {k: v for k, v in params.items() if v is not None}
+
+        return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
+
+    async def get_hotel_offer_params(
+            self,
+            hotel_ids: List[str],
+            adults: int = 1,
+            check_in_date: str = None,
+            check_out_date: str = None,
+            country_of_residence: str = None,
+            room_quantity: int = Field(1, ge=1, le=9),
+            price_range: Optional[str] = Field(None, example="200-300"),
+            currency: str = None,
+            payment_policy: str = "NONE",
+            board_type: str = None,
+            include_closed: bool = False,
+            best_rate_only: bool = True,
+            lang: str = "EN",
+    ) -> Dict[str, Any]:
+        if not self.access_token:
+            await self.authenticate()
+
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+
+        params = {
+            "hotelIds": ",".join(hotel_ids),  # Передаем как строку через запятую
+            "adults": adults,
+            "checkInDate": check_in_date,
+            "checkOutDate": check_out_date,
+            "countryOfResidence": country_of_residence,
+            "roomQuantity": room_quantity,
+            "priceRange": price_range,
+            "currency": currency,
+            "paymentPolicy": payment_policy,
+            "boardType": board_type,
+            "includeClosed": include_closed,
+            "bestRateOnly": best_rate_only,
+            "lang": lang,
+        }
+
+        params = {k: v for k, v in params.items() if v is not None}
+
+        return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
+
