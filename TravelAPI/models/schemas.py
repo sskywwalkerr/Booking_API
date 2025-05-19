@@ -101,3 +101,16 @@ class HotelOfferRequestParams(BaseModel):
     include_closed: bool = Field(False, description="Include sold-out hotels")
     best_rate_only: bool = Field(True, description="Return cheapest offer only")
     lang: str = Field("EN", description="ISO 639 language code")
+
+
+class PaymentCardInfo(BaseModel):
+    vendorCode: str
+    cardNumber: str
+    expiryDate: str
+    holderName: str
+
+
+class Payment(BaseModel):
+    method: str
+    paymentCard: PaymentCardInfo
+
