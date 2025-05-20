@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 
 
@@ -69,16 +69,6 @@ class HotelSearchRequest(BaseModel):
     hotel_source: Optional[HotelSource] = Field(HotelSource.ALL, description="Hotel data source")
 
 
-# class HotelOfferRequest(BaseModel):
-#     city_code: str = Field(..., description="IATA-код города (например: 'PAR')")
-#     check_in_date: str = Field(..., description="Дата заезда (YYYY-MM-DD)")
-#     check_out_date: str = Field(..., description="Дата выезда (YYYY-MM-DD)")
-#     adults: int = Field(1, description="Количество взрослых")
-#     radius: Optional[int] = Field(5, description="Радиус поиска")
-#     radius_unit: Optional[RadiusUnit] = Field(RadiusUnit.KM, description="Единица радиуса")
-#     amenities: Optional[List[Amenity]] = Field(None, description="Удобства")
-#     ratings: Optional[List[Rating]] = Field(None, description="Рейтинги")
-#     hotel_source: Optional[HotelSource] = Field(HotelSource.ALL, description="Источник отелей")
 class HotelOfferRequest(BaseModel):
     hotel_ids: str = Field(..., description="Hotel ID (e.g., 'HLPAR266')")
     check_in_date: str = Field(..., description="YYYY-MM-DD")
@@ -103,14 +93,43 @@ class HotelOfferRequestParams(BaseModel):
     lang: str = Field("EN", description="ISO 639 language code")
 
 
-class PaymentCardInfo(BaseModel):
-    vendorCode: str
-    cardNumber: str
-    expiryDate: str
-    holderName: str
+class Guest(BaseModel):
+    title: str = Field(..., example="MR")
+    firstName: str = Field(..., example="Ivan")
+    lastName: str = Field(..., example="Petrov")
+    phone: str = Field(..., example="+79123456789")
+    email: str = Field(..., example="ivan@example.com")
 
+class PaymentCardInfo(BaseModel):
+    vendorCode: str = Field(..., example="VI")
+    cardNumber: str = Field(..., example="4111111111111111")
+    expiryDate: str = Field(..., example="2026-12")  # Формат "YYYY-MM"
+    holderName: str = Field(..., example="IVAN PETROV")
+
+class PaymentCard(BaseModel):
+    paymentCardInfo: PaymentCardInfo
 
 class Payment(BaseModel):
-    method: str
-    paymentCard: PaymentCardInfo
+    method: str = Field(..., example="CREDIT_CARD")
+    paymentCard: PaymentCard
 
+class RoomAssociation(BaseModel):
+    guestReferences: List[str] = Field(..., example=["1"])
+    hotelOfferId: str = Field(..., example="H12345")
+
+class TravelAgentContact(BaseModel):
+    email: str = Field(..., example="agent@agency.com")
+
+class TravelAgent(BaseModel):
+    contact: TravelAgentContact
+
+class HotelBookingRequest(BaseModel):
+    type: str = Field(default="hotel-order")
+    guests: List[Guest]
+    roomAssociations: List[RoomAssociation]
+    payment: Payment
+    travelAgent: TravelAgent
+    remarks: Optional[str] = None
+
+    class Config:
+        allow_population_by_field_name = True
