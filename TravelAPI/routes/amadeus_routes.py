@@ -2,7 +2,7 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from TravelAPI.clients.amadeus_api_client import AmadeusApiClient
 from TravelAPI.models.schemas import (
-    HotelSearchRequest, HotelOfferRequest, HotelOfferRequestParams
+    HotelSearchRequest, HotelOfferRequest, HotelOfferRequestParams, HotelBookingRequest
 )
 
 router_search = APIRouter()
@@ -63,5 +63,19 @@ async def hotel_offers_params(request: HotelOfferRequestParams):
         )
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router_search.post("/hotel/bookings/")
+async def book_hotel(request: HotelBookingRequest):
+    try:
+        payload = request.dict(by_alias=True, exclude_unset=True)
+        return await amadeus_client.book_hotel(payload=payload)
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(
+            status_code=e.response.status_code,
+            detail=f"Amadeus API Error: {e.response.text}"
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
