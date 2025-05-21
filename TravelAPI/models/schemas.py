@@ -94,42 +94,100 @@ class HotelOfferRequestParams(BaseModel):
 
 
 class Guest(BaseModel):
-    title: str = Field(..., example="MR")
-    firstName: str = Field(..., example="Ivan")
-    lastName: str = Field(..., example="Petrov")
-    phone: str = Field(..., example="+79123456789")
-    email: str = Field(..., example="ivan@example.com")
-
-class PaymentCardInfo(BaseModel):
-    vendorCode: str = Field(..., example="VI")
-    cardNumber: str = Field(..., example="4111111111111111")
-    expiryDate: str = Field(..., example="2026-12")  # Формат "YYYY-MM"
-    holderName: str = Field(..., example="IVAN PETROV")
-
-class PaymentCard(BaseModel):
-    paymentCardInfo: PaymentCardInfo
-
-class Payment(BaseModel):
-    method: str = Field(..., example="CREDIT_CARD")
-    paymentCard: PaymentCard
-
-class RoomAssociation(BaseModel):
-    guestReferences: List[str] = Field(..., example=["1"])
-    hotelOfferId: str = Field(..., example="H12345")
-
-class TravelAgentContact(BaseModel):
-    email: str = Field(..., example="agent@agency.com")
-
-class TravelAgent(BaseModel):
-    contact: TravelAgentContact
-
-class HotelBookingRequest(BaseModel):
-    type: str = Field(default="hotel-order")
-    guests: List[Guest]
-    roomAssociations: List[RoomAssociation]
-    payment: Payment
-    travelAgent: TravelAgent
-    remarks: Optional[str] = None
+    tid: int = Field(..., example=1, alias="tid")
+    title: str = Field(..., example="MR", alias="title")
+    firstName: str = Field(..., example="BOB", alias="firstName")
+    lastName: str = Field(..., example="SMITH", alias="lastName")
+    phone: str = Field(..., example="+33679278416", alias="phone")
+    email: str = Field(..., example="bob.smith@email.com", alias="email")
 
     class Config:
         allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class GuestReference(BaseModel):
+    guestReference: str = Field(..., example="1", alias="guestReference")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class RoomAssociation(BaseModel):
+    guestReferences: List[GuestReference] = Field(
+        ...,
+        example=[{"guestReference": "1"}],
+        alias="guestReferences"
+    )
+    hotelOfferId: str = Field(..., example="4L8PRJPEN7", alias="hotelOfferId")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class PaymentCardInfo(BaseModel):
+    vendorCode: str = Field(..., example="VI", alias="vendorCode")
+    cardNumber: str = Field(..., example="4151289722471370", alias="cardNumber")
+    expiryDate: str = Field(..., example="2026-08", alias="expiryDate")
+    holderName: str = Field(..., example="BOB SMITH", alias="holderName")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class PaymentCard(BaseModel):
+    paymentCardInfo: PaymentCardInfo = Field(..., alias="paymentCardInfo")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class Payment(BaseModel):
+    method: str = Field(..., example="CREDIT_CARD", alias="method")
+    paymentCard: PaymentCard = Field(..., alias="paymentCard")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class TravelAgentContact(BaseModel):
+    email: str = Field(..., example="agent@example.com", alias="email")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class TravelAgent(BaseModel):
+    contact: TravelAgentContact = Field(..., alias="contact")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class HotelOrderData(BaseModel):
+    type: str = Field(default="hotel-order", alias="type")
+    guests: List[Guest] = Field(..., alias="guests")
+    travelAgent: TravelAgent = Field(..., alias="travelAgent")
+    roomAssociations: List[RoomAssociation] = Field(..., alias="roomAssociations")
+    payment: Payment = Field(..., alias="payment")
+    remarks: Optional[str] = Field(None, alias="remarks")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+
+
+class HotelBookingRequest(BaseModel):
+    data: HotelOrderData = Field(..., alias="data")
+
+    class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
+        alias_generator = lambda s: s

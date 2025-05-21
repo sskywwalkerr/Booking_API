@@ -77,5 +77,3 @@ async def book_hotel(request: HotelBookingRequest):
             status_code=e.response.status_code,
             detail=f"Amadeus API Error: {e.response.text}"
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
