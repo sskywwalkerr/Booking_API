@@ -15,6 +15,7 @@ class AmadeusApiClient:
     BASE_URL_V1 = "https://test.api.amadeus.com/v1"
     BASE_URL_V2 = "https://test.api.amadeus.com/v2"
     BASE_URL_V3 = "https://test.api.amadeus.com/v3"
+    HOTEL_BOOKINGS_URL = f"{BASE_URL_V2}/booking/hotel-orders"
     TOKEN_URL = f"{BASE_URL_V1}/security/oauth2/token"
     HOTELS_BY_CITY_URL = f"{BASE_URL_V1}/reference-data/locations/hotels/by-city"
     HOTEL_OFFERS_URL = f"{BASE_URL_V3}/shopping/hotel-offers"
@@ -154,4 +155,50 @@ class AmadeusApiClient:
         params = {k: v for k, v in params.items() if v is not None}
 
         return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
+
+    # async def book_hotel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    #     if not self.access_token:
+    #         await self.authenticate()
+    #
+    #     headers = {
+    #         "Authorization": f"Bearer {self.access_token}",
+    #         "Content-Type": "application/json"
+    #     }
+    #     request_payload = payload.get("data", payload)
+    #     try:
+    #         async with httpx.AsyncClient() as client:
+    #             response = await client.post(
+    #                 self.HOTEL_BOOKINGS_URL,
+    #                 json=request_payload,
+    #                 headers=headers
+    #             )
+    #             response.raise_for_status()
+    #             return response.json()
+    #     except httpx.HTTPStatusError as e:
+    #         error_detail = f"Amadeus API Error [{e.response.status_code}]: {e.response.text}"
+    #         raise ValueError(error_detail)
+    async def book_hotel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        if not self.access_token:
+            await self.authenticate()
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/json"
+        }
+
+        request_payload = payload.get("data", payload)
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    self.HOTEL_BOOKINGS_URL,
+                    json={"data": request_payload},
+                    headers=headers
+                )
+                response.raise_for_status()
+                return response.json()
+        except httpx.HTTPStatusError as e:
+            error_detail = f"Amadeus API Error [{e.response.status_code}]: {e.response.text}"
+            raise ValueError(error_detail)
+
 
