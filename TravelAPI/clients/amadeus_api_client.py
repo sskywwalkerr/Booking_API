@@ -56,7 +56,7 @@ class AmadeusApiClient:
             )
             response.raise_for_status()
             return response.json()
-
+    """Поиск отеля"""
     async def search_hotels(
             self,
             city_code: str,
@@ -75,20 +75,21 @@ class AmadeusApiClient:
         params = {
             "cityCode": city_code,
             "radius": radius,
-            "radiusUnit": radius_unit,
-            "hotelSource": hotel_source,
+            "radiusUnit": radius_unit.upper() if radius_unit else None,
+            "hotelSource": hotel_source.upper() if hotel_source else None,
         }
         if chain_codes:
-            params["chainCodes"] = chain_codes  # лучше передать пустой список, что бы показать все отели
+            params["chainCodes"] = ",".join(chain_codes)  # лучше передать пустой список, что бы показать все отели
         if amenities:
-            params["amenities"] = ','.join(amenities)
+            params["amenities"] = ",".join([a.upper() for a in amenities])
         if ratings:
-            params["ratings"] = ','.join(ratings)
+            params["ratings"] = ",".join(ratings) # передать через запятую
 
-        params = {k: v for k, v in params.items() if v is not None}
+        params = {k: v for k, v in params.items() if v is not None and v != ""}
 
         return await self.make_request("GET", self.HOTELS_BY_CITY_URL, headers, params)
 
+    """Предложения отелей"""
     async def get_hotel_offers(
             self,
             hotel_ids: str,
@@ -115,6 +116,7 @@ class AmadeusApiClient:
 
         return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
 
+    """Предложений отелей по параметрам"""
     async def get_hotel_offer_params(
             self,
             hotel_ids: List[str],
@@ -156,27 +158,7 @@ class AmadeusApiClient:
 
         return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
 
-    # async def book_hotel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-    #     if not self.access_token:
-    #         await self.authenticate()
-    #
-    #     headers = {
-    #         "Authorization": f"Bearer {self.access_token}",
-    #         "Content-Type": "application/json"
-    #     }
-    #     request_payload = payload.get("data", payload)
-    #     try:
-    #         async with httpx.AsyncClient() as client:
-    #             response = await client.post(
-    #                 self.HOTEL_BOOKINGS_URL,
-    #                 json=request_payload,
-    #                 headers=headers
-    #             )
-    #             response.raise_for_status()
-    #             return response.json()
-    #     except httpx.HTTPStatusError as e:
-    #         error_detail = f"Amadeus API Error [{e.response.status_code}]: {e.response.text}"
-    #         raise ValueError(error_detail)
+    """Бронирование отеля"""
     async def book_hotel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if not self.access_token:
             await self.authenticate()
@@ -200,5 +182,6 @@ class AmadeusApiClient:
         except httpx.HTTPStatusError as e:
             error_detail = f"Amadeus API Error [{e.response.status_code}]: {e.response.text}"
             raise ValueError(error_detail)
+
 
 
