@@ -56,7 +56,7 @@ class AmadeusApiClient:
             )
             response.raise_for_status()
             return response.json()
-
+    """Поиск отеля"""
     async def search_hotels(
             self,
             city_code: str,
@@ -89,6 +89,7 @@ class AmadeusApiClient:
 
         return await self.make_request("GET", self.HOTELS_BY_CITY_URL, headers, params)
 
+    """Предложения отелей"""
     async def get_hotel_offers(
             self,
             hotel_ids: str,
@@ -115,6 +116,7 @@ class AmadeusApiClient:
 
         return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
 
+    """Предложений отелей по параметрам"""
     async def get_hotel_offer_params(
             self,
             hotel_ids: List[str],
@@ -156,6 +158,7 @@ class AmadeusApiClient:
 
         return await self.make_request("GET", self.HOTEL_OFFERS_URL, headers, params)
 
+    """Бронирование отеля"""
     async def book_hotel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if not self.access_token:
             await self.authenticate()
@@ -179,5 +182,6 @@ class AmadeusApiClient:
         except httpx.HTTPStatusError as e:
             error_detail = f"Amadeus API Error [{e.response.status_code}]: {e.response.text}"
             raise ValueError(error_detail)
+
 
 
