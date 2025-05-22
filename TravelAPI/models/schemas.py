@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Dict
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
@@ -120,7 +120,7 @@ class RoomAssociation(BaseModel):
         example=[{"guestReference": "1"}],
         alias="guestReferences"
     )
-    hotelOfferId: str = Field(..., example="4L8PRJPEN7", alias="hotelOfferId")
+    hotelOfferId: str = Field(..., example="94MRASSKRV", alias="hotelOfferId")
 
     class Config:
         allow_population_by_field_name = True
