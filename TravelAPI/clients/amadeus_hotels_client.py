@@ -182,6 +182,3 @@ class AmadeusApiClient:
         except httpx.HTTPStatusError as e:
             error_detail = f"Amadeus API Error [{e.response.status_code}]: {e.response.text}"
             raise ValueError(error_detail)
-
-
-
