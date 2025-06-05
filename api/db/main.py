@@ -47,7 +47,7 @@ app.include_router(main_api_router6)
 
 
 main_api_router7 = APIRouter()
-main_api_router7.include_router(router_flights, prefix="/search-hotels", tags=["search-hotels"])
+main_api_router7.include_router(router_flights, prefix="/flight-offers", tags=["flight-offers"])
 app.include_router(main_api_router7)
 
 # подключение админки
