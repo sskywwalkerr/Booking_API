@@ -18,6 +18,8 @@ class AmadeusApiClient:
     HOTEL_BOOKINGS_URL = f"{BASE_URL_V2}/booking/hotel-orders"
     TOKEN_URL = f"{BASE_URL_V1}/security/oauth2/token"
     FLIGHTS_SEARCH_URL = f"{BASE_URL_V2}/shopping/flight-offers"
+    FLIGHTS_SEARCH_DESTINATIONS = f"{BASE_URL_V1}/shopping/flight-destinations"
+    FLIGHTS_SEARCH_AIRLINE = f"{BASE_URL_V1}/airline/destinations"
 
     def __init__(self):
         self.client_id = os.getenv('TRAVEL_API_KEY')
@@ -78,5 +80,44 @@ class AmadeusApiClient:
 
             return response.json()
 
+    # async def get_destination(self, params: dict) -> Dict[str, Any]:
+    #     if not self.access_token:
+    #         await self.authenticate()
+    #
+    #     headers = {
+    #         "Authorization": f"Bearer {self.access_token}"
+    #     }
+    #
+    #     async with httpx.AsyncClient() as client:
+    #         response = await client.get(
+    #             f"{self.FLIGHTS_SEARCH_DESTINATIONS}",
+    #             params=params,
+    #             headers=headers,
+    #             timeout=30.0
+    #         )
+    #
+    #         if response.status_code != 200:
+    #             raise HTTPException(status_code=response.status_code, detail=response.text)
+    #
+    #         return response.json()
 
+    async def get_airline_destination(self, params: dict) -> Dict[str, Any]:
+        if not self.access_token:
+            await self.authenticate()
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}"
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.FLIGHTS_SEARCH_AIRLINE}",
+                params=params,
+                headers=headers,
+                timeout=30.0)
+
+            if response.status_code != 200:
+                raise HTTPException(status_code=response.status_code, detail=response.text)
+
+            return response.json()
 
