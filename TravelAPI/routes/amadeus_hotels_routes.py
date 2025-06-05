@@ -1,7 +1,7 @@
 import httpx
 from fastapi import APIRouter, HTTPException
 from TravelAPI.clients.amadeus_hotels_client import AmadeusApiClient
-from TravelAPI.models.schemas import (
+from TravelAPI.models.schemas_hotels import (
     HotelSearchRequest, HotelOfferRequest, HotelOfferRequestParams, HotelBookingRequest
 )
 
