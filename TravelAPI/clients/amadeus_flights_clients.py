@@ -20,6 +20,7 @@ class AmadeusApiClient:
     FLIGHTS_SEARCH_URL = f"{BASE_URL_V2}/shopping/flight-offers"
     FLIGHTS_SEARCH_DESTINATIONS = f"{BASE_URL_V1}/shopping/flight-destinations"
     FLIGHTS_SEARCH_AIRLINE = f"{BASE_URL_V1}/airline/destinations"
+    FLIGHTS_SEARCH_LOCATIONS = f"{BASE_URL_V1}/reference-data/locations"
 
     def __init__(self):
         self.client_id = os.getenv('TRAVEL_API_KEY')
@@ -80,27 +81,6 @@ class AmadeusApiClient:
 
             return response.json()
 
-    # async def get_destination(self, params: dict) -> Dict[str, Any]:
-    #     if not self.access_token:
-    #         await self.authenticate()
-    #
-    #     headers = {
-    #         "Authorization": f"Bearer {self.access_token}"
-    #     }
-    #
-    #     async with httpx.AsyncClient() as client:
-    #         response = await client.get(
-    #             f"{self.FLIGHTS_SEARCH_DESTINATIONS}",
-    #             params=params,
-    #             headers=headers,
-    #             timeout=30.0
-    #         )
-    #
-    #         if response.status_code != 200:
-    #             raise HTTPException(status_code=response.status_code, detail=response.text)
-    #
-    #         return response.json()
-
     async def get_airline_destination(self, params: dict) -> Dict[str, Any]:
         if not self.access_token:
             await self.authenticate()
@@ -121,3 +101,30 @@ class AmadeusApiClient:
 
             return response.json()
 
+    async def get_airline_location(self, params: dict) -> Dict[str, Any]:
+        if not self.access_token:
+            await self.authenticate()
+
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+
+        encoded_params = []
+        for key, value in params.items():
+            if '[' in key and ']' in key:
+                # кодирую только значение, ключ оставляю как есть
+                encoded_params.append((key, str(value)))
+            else:
+                encoded_params.append((key, str(value)))
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.FLIGHTS_SEARCH_LOCATIONS}",
+                params=encoded_params,  # преобразованные параметры
+                headers=headers,
+                timeout=30.0
+            )
+
+            if response.status_code != 200:
+                print(f"Amadeus API error: {response.status_code}, {response.text}")
+                raise HTTPException(status_code=response.status_code, detail=response.text)
+
+            return response.json()
