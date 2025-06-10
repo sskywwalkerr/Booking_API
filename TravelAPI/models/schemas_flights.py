@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, validator
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 
 class FlightSearchParams(BaseModel):
@@ -78,3 +78,18 @@ class AirlineLocationParams(BaseModel):
             "page_limit": "page[limit]",
             "page_offset": "page[offset]"
         }
+
+
+class FlightOfferPricingRequest(BaseModel):
+    data: Dict[str, Any] = Field(..., description="Данные предложений перелета")
+
+
+class FlightOffersPriceParams(BaseModel):
+    include: Optional[str] = Field(
+        None,
+        description="Дополнительные ресурсы: credit-card-fees,bags,other-services,detailed-fare-rules"
+    )
+    forceClass: Optional[bool] = Field(
+        False,
+        description="Принудительное использование класса бронирования"
+    )
