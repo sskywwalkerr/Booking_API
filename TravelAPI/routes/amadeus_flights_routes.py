@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Body
 
 from TravelAPI.clients.amadeus_flights_clients import AmadeusApiClient
-from TravelAPI.models.schemas_flights import FlightSearchParams, AirlineDestinationParams, AirlineLocationParams
+from TravelAPI.models.schemas_flights import FlightSearchParams, AirlineDestinationParams, AirlineLocationParams, \
+    FlightOffersPriceParams, FlightOfferPricingRequest
 
 router_flights = APIRouter()
 amadeus_client = AmadeusApiClient()
@@ -33,3 +34,37 @@ async def search_airline_location(params: AirlineLocationParams = Depends()):
 
     result = await amadeus_client.get_airline_location(amadeus_params)
     return result
+
+
+@router_flights.post("shopping/flight-offers/pricing")
+async def price_flight_offers(
+        request: FlightOfferPricingRequest = Body(..., description="Предложения перелетов для подтверждения цены"),
+        params: FlightOffersPriceParams = Depends(),
+):
+    """
+    Подтверждение цены для предложений перелетов
+
+    Требуемые заголовки:
+    - X-HTTP-Method-Override: GET
+    - Content-Type: application/vnd.amadeus+json
+
+    Параметры запроса:
+    - include: Дополнительные ресурсы (credit-card-fees, bags, other-services, detailed-fare-rules)
+    - forceClass: Принудительное использование класса бронирования (true/false)
+    """
+    try:
+        # Извлекаем список предложений из тела запроса
+        flight_offers = request.data["flightOffers"]
+
+        result = await amadeus_client.price_flight_offers(
+            flight_offers=flight_offers,
+            params=params
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка при подтверждении цены: {str(e)}"
+        )
