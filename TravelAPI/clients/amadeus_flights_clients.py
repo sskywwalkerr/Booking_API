@@ -1,9 +1,11 @@
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import httpx
 import os
 from dotenv import load_dotenv
 from fastapi import HTTPException
+
+from TravelAPI.models.schemas_flights import FlightOffersPriceParams
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -21,6 +23,7 @@ class AmadeusApiClient:
     FLIGHTS_SEARCH_DESTINATIONS = f"{BASE_URL_V1}/shopping/flight-destinations"
     FLIGHTS_SEARCH_AIRLINE = f"{BASE_URL_V1}/airline/destinations"
     FLIGHTS_SEARCH_LOCATIONS = f"{BASE_URL_V1}/reference-data/locations"
+    FLIGHTS_OFFER = f"{BASE_URL_V1}/shopping/flight-offers/pricing"
 
     def __init__(self):
         self.client_id = os.getenv('TRAVEL_API_KEY')
@@ -126,5 +129,43 @@ class AmadeusApiClient:
             if response.status_code != 200:
                 print(f"Amadeus API error: {response.status_code}, {response.text}")
                 raise HTTPException(status_code=response.status_code, detail=response.text)
+
+            return response.json()
+
+    async def price_flight_offers(
+            self,
+            flight_offers: List[Dict[str, Any]],
+            params: FlightOffersPriceParams
+    ) -> Dict[str, Any]:
+        if not self.access_token:
+            await self.authenticate()
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "X-HTTP-Method-Override": "GET",
+            "Content-Type": "application/vnd.amadeus+json"
+        }
+
+        request_body = {
+            "data": {
+                "type": "flight-offers-pricing",
+                "flightOffers": flight_offers
+            }
+        }
+
+        query_params = params.dict(exclude_none=True)
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.FLIGHTS_OFFER}",
+                json=request_body,
+                headers=headers,
+                params=query_params,
+                timeout=30.0
+            )
+
+            if response.status_code != 200:
+                error_detail = f"Amadeus API error: {response.status_code} - {response.text}"
+                raise ValueError(error_detail)
 
             return response.json()
