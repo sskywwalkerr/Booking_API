@@ -93,3 +93,4 @@ class FlightOffersPriceParams(BaseModel):
         False,
         description="Принудительное использование класса бронирования"
     )
+
