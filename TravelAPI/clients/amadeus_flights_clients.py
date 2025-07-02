@@ -169,3 +169,4 @@ class AmadeusApiClient:
                 raise ValueError(error_detail)
 
             return response.json()
+
