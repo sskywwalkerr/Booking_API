@@ -68,3 +68,4 @@ async def price_flight_offers(
             status_code=500,
             detail=f"Ошибка при подтверждении цены: {str(e)}"
         )
+
