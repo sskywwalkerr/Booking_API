@@ -1,66 +1,88 @@
 version: "3.8"
+
 services:
   app:
-    build:
-      context: .
+    build: .
     container_name: app
-    restart: always
+    restart: unless-stopped
     volumes:
-      - app_static:/my_booking/api/static/
+      - ./app/static:/my_booking/api/static  # Локальный биндинг для статики
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     env_file:
-      - ./.env-docker
-    command: [ '/my_booking/docker/app.sh' ]
+      - ./.env
+    command: /my_booking/docker/app.sh
     ports:
       - "8000:8000"
     networks:
       - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   db:
     image: postgres:15
     container_name: db
     env_file:
-      - ./.env-docker
+      - ./.env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    ports:
-     - "5432:5432"
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    command: postgres -c log_destination=stderr  # Логи в stdout
     networks:
       - app-network
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     container_name: redis
-    depends_on:
-      - db
+    volumes:
+      - redis_data:/data
     env_file:
       - ./.env
-    ports:
-     - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - app-network
 
   celery:
-    build:
-      context: .
+    build: .
     container_name: celery
     command: ['/my_booking/docker/celery.sh', 'celery']
-    # command: celery -A api.celery_tasks.c_app worker --loglevel=INFO
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     env_file:
       - ./.env
+    volumes:
+      - .:/my_booking
     networks:
       - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   flower:
-    build:
-      context: .
+    build: .
     container_name: flower
     command: ['/my_booking/docker/celery.sh', 'flower']
-    # command: celery -A api.tasks.celery:celery flower
     depends_on:
       - redis
       - celery
@@ -70,12 +92,15 @@ services:
       - "5555:5555"
     networks:
       - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
-  app_static:
   redis_data:
-  celery_logs:
 
 networks:
   app-network:
