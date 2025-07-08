@@ -16,3 +16,4 @@ def send_email(recipients: list[str], subject: str, body: str):
         print("Email sent")
     except Exception as e:
         print(f"Error sending email: {e}")
+
