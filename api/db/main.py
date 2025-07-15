@@ -2,8 +2,9 @@
 from fastapi import FastAPI, APIRouter
 from sqladmin import Admin
 
-from TravelAPI.routes.amadeus_flights_routes import router_flights
-from TravelAPI.routes.amadeus_hotels_routes import router_search
+from AmadeusAPI.routes.amadeus_flights_routes import router_flights
+from AmadeusAPI.routes.amadeus_hotels_routes import router_search
+from RapidAPI.routes.rapid_flights_routes import rapid_booking_flights
 from api.admin.auth import authentication_backend
 
 from api.admin.main import UserAdmin, BookingAdmin, RoomAdmin, HotelAdmin
@@ -49,6 +50,8 @@ app.include_router(main_api_router6)
 main_api_router7 = APIRouter()
 main_api_router7.include_router(router_flights, prefix="/flight-offers", tags=["flight-offers"])
 app.include_router(main_api_router7)
+
+app.include_router(rapid_booking_flights, prefix="/flight-rapid", tags=["flight-rapid"])
 
 # подключение админки
 admin = Admin(app, async_engine, authentication_backend=authentication_backend)
