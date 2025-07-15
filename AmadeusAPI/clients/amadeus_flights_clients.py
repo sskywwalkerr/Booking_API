@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import HTTPException
 
-from TravelAPI.models.schemas_flights import FlightOffersPriceParams
+from AmadeusAPI.models.schemas_flights import FlightOffersPriceParams
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

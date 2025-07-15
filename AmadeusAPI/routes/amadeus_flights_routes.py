@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Body
 
-from TravelAPI.clients.amadeus_flights_clients import AmadeusApiClient
-from TravelAPI.models.schemas_flights import FlightSearchParams, AirlineDestinationParams, AirlineLocationParams, \
+from AmadeusAPI.clients.amadeus_flights_clients import AmadeusApiClient
+from AmadeusAPI.models.schemas_flights import FlightSearchParams, AirlineDestinationParams, AirlineLocationParams, \
     FlightOffersPriceParams, FlightOfferPricingRequest
 
 router_flights = APIRouter()
@@ -53,7 +53,6 @@ async def price_flight_offers(
     - forceClass: Принудительное использование класса бронирования (true/false)
     """
     try:
-        # Извлекаем список предложений из тела запроса
         flight_offers = request.data["flightOffers"]
 
         result = await amadeus_client.price_flight_offers(
