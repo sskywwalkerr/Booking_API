@@ -4,7 +4,7 @@ import os
 
 from RapidAPI.clients.rapid_flights_clients import HotelsClient
 from RapidAPI.models.schemas_flights import FlightDestinationResponse
-
+import httpx
 load_dotenv()
 
 rapid_booking_flights = APIRouter()
@@ -12,6 +12,8 @@ rapid_booking_flights = APIRouter()
 
 def get_hotels_client():
     api_key = os.getenv("RAPIDAPI_KEY")
+    if not api_key:
+        raise ValueError("RAPIDAPI_KEY не найден в .env")
     return HotelsClient(api_key)
 
 
