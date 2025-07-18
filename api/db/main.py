@@ -51,7 +51,11 @@ main_api_router7 = APIRouter()
 main_api_router7.include_router(router_flights, prefix="/flight-offers", tags=["flight-offers"])
 app.include_router(main_api_router7)
 
-app.include_router(rapid_booking_flights, prefix="/flight-rapid", tags=["flight-rapid"])
+
+main_api_router8 = APIRouter()
+main_api_router8.include_router(rapid_booking_flights, prefix="/flight-rapid", tags=["flight-rapid"])
+app.include_router(main_api_router8)
+
 
 # подключение админки
 admin = Admin(app, async_engine, authentication_backend=authentication_backend)

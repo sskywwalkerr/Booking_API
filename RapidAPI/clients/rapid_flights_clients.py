@@ -9,7 +9,7 @@ class HotelsClient:
             "x-rapidapi-key": self.api_key,
             "x-rapidapi-host": "booking-com15.p.rapidapi.com"
         }
-        self.base_url = "https://booking-com15.p.rapidapi.com/api/v1 "
+        self.base_url = "https://booking-com15.p.rapidapi.com/api/v1"
 
     async def search_flight_destinations(self, query: str):
         url = f"{self.base_url}/flights/searchDestination"
