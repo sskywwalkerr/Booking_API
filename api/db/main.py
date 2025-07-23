@@ -4,6 +4,7 @@ from sqladmin import Admin
 
 from AmadeusAPI.routes.amadeus_flights_routes import router_flights
 from AmadeusAPI.routes.amadeus_hotels_routes import router_search
+from AvaiasalesAPI.routes.flights_routes import aviasales_api
 from RapidAPI.routes.rapid_flights_routes import rapid_booking_flights
 from api.admin.auth import authentication_backend
 
@@ -56,6 +57,9 @@ main_api_router8 = APIRouter()
 main_api_router8.include_router(rapid_booking_flights, prefix="/flight-rapid", tags=["flight-rapid"])
 app.include_router(main_api_router8)
 
+aviasales_api_routes = APIRouter()
+aviasales_api_routes.include_router(aviasales_api, prefix="/flights", tags=["flights"])
+app.include_router(aviasales_api_routes)
 
 # подключение админки
 admin = Admin(app, async_engine, authentication_backend=authentication_backend)
