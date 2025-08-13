@@ -13,8 +13,8 @@ async def initiate_search(request_data: dict) -> dict:
         "user_ip": request_data["user_ip"],
         "locale": request_data["locale"],
         "trip_class": request_data["trip_class"],
-        "passengers": json.dumps(request_data["passengers"]),
-        "segments": json.dumps(request_data["segments"])
+        "passengers": request_data["passengers"],
+        "segments": request_data["segments"]
     }
 
     params["signature"] = generate_signature(params, Config.aviasales_secret)
