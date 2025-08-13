@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     USE_CREDENTIALS: bool = True
     VALIDATE_CERTS: bool = True
     DOMAIN: str
+
+    aviasales_marker: str
+    aviasales_secret: str
+    host: str = "https://perversely-discreet-sunfish.cloudpub.ru/"
+    rate_limit: str = "200/hour"
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
