@@ -10,7 +10,7 @@ aviasales_api = APIRouter()
 @aviasales_api.post("/initiate", response_model=SearchResponse)
 async def start_search(request: SearchRequest):
     try:
-        result = await initiate_search(request)
+        result = await initiate_search(request.dict())
         return {"search_id": result["search_id"]}
     except httpx.HTTPStatusError as e:
         raise HTTPException(
